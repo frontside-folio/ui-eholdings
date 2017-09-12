@@ -65,6 +65,7 @@ module.exports = function(config) {
 
     plugins: [
       'karma-chrome-launcher',
+      'karma-safari-launcher',
       'karma-mocha',
       'karma-webpack',
       'karma-mocha-reporter'
