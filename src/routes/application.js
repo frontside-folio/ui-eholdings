@@ -21,7 +21,7 @@ class ApplicationRoute extends Component {
     this.props.getBackendStatus();
   }
 
-  render() {
+  get view() {
     let {
       status,
       interfaces: { eholdings: version },
@@ -29,17 +29,25 @@ class ApplicationRoute extends Component {
       children
     } = this.props;
 
+    if (version) {
+      if (status.isPending) {
+        return (<Icon icon="spinner-ellipsis" />);
+      } else if (status.isRejected) {
+        return (<FailedBackendErrorScreen />);
+      } else if (!(showSettings || status.content['is-configuration-valid'])) {
+        return (<InvalidBackendErrorScreen />);
+      } else {
+        return children;
+      }
+    } else {
+      return (<NoBackendErrorScreen />);
+    }
+  }
+
+  render() {
     return (
       <div className="eholdings-application" data-test-eholdings-application style={{ width: '100%' }}>
-        {version ? (status.isPending ? (
-          <Icon icon="spinner-ellipsis" />
-        ) : status.isRejected ? (
-          <FailedBackendErrorScreen />
-        ) : status.isResolved && (
-          !(showSettings || status.content['is-configuration-valid'])
-            ? <InvalidBackendErrorScreen />
-            : children
-        )) : <NoBackendErrorScreen />}
+        {this.view}
       </div>
     );
   }
