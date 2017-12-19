@@ -1,0 +1,25 @@
+.customer-resource-custom-coverages-list {
+  list-style-type: none;
+  padding: 0 0 0 0;
+}
+
+.coverage-dates {
+  background-color: red;
+  opacity: 0.01
+}
+
+.coverage-dates.coverage-dates-active {
+  background-color: red;
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+ }
+
+.coverage-dates-exit {
+  background-color: red;
+  opacity: 1;
+ }
+
+.coverage-dates-exit.coverage-dates-exit-active {
+  opacity: 0.01;
+  transition: opacity 800ms ease-in;
+}

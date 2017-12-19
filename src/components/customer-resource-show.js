@@ -13,6 +13,7 @@ import IdentifiersList from './identifiers-list';
 import ContributorsList from './contributors-list';
 import ToggleSwitch from './toggle-switch';
 import CoverageDates from './coverage-dates';
+import CustomerResourceCustomCoverage from './customer-resource-custom-coverage';
 import { isBookPublicationType, isValidCoverageList } from './utilities';
 import Modal from './modal';
 import styles from './styles.css';
@@ -23,12 +24,14 @@ export default class CustomerResourceShow extends Component {
     model: PropTypes.object.isRequired,
     toggleSelected: PropTypes.func.isRequired,
     toggleHidden: PropTypes.func.isRequired,
-    customEmbargoSubmitted: PropTypes.func.isRequired
+    customEmbargoSubmitted: PropTypes.func.isRequired,
+    customCoverageSubmitted: PropTypes.func.isRequired
   };
 
   static contextTypes = {
     router: PropTypes.object,
-    queryParams: PropTypes.object
+    queryParams: PropTypes.object,
+    intl: PropTypes.object
   };
 
   state = {
@@ -68,8 +71,8 @@ export default class CustomerResourceShow extends Component {
   };
 
   render() {
-    let { model, customEmbargoSubmitted } = this.props;
-    let { router, queryParams } = this.context;
+    let { model, customEmbargoSubmitted, customCoverageSubmitted } = this.props;
+    let { router, queryParams, intl } = this.context;
     let { showSelectionModal, resourceSelected, resourceHidden } = this.state;
 
     let historyState = router.history.location.state;
@@ -83,6 +86,11 @@ export default class CustomerResourceShow extends Component {
       model.customEmbargoPeriod.embargoValue;
     let customEmbargoValue = model.customEmbargoPeriod && model.customEmbargoPeriod.embargoValue;
     let customEmbargoUnit = model.customEmbargoPeriod && model.customEmbargoPeriod.embargoUnit;
+    let hasCustomCoverages = model.customCoverages.length > 0 &&
+      isValidCoverageList(model.customCoverages);
+
+    // let hasCustomCoverages = model.customCoverages.length > 0 &&
+    //   isValidCoverageList(model.customCoverages);
 
     return (
       <div>
@@ -160,6 +168,7 @@ export default class CustomerResourceShow extends Component {
                   />
                 </KeyValueLabel>
               )}
+
 
               {hasManagedEmbargoPeriod && (
                 <KeyValueLabel label="Managed Embargo Period">
@@ -242,6 +251,20 @@ export default class CustomerResourceShow extends Component {
                       />
                     )}
                   </KeyValueLabel>
+
+                  {model.customCoverages && (
+                    <div>
+                      <hr />
+                      <KeyValueLabel label="Custom Coverage">
+                        <CustomerResourceCustomCoverage
+                          customCoverages={model.customCoverages}
+                          onSubmit={customCoverageSubmitted}
+                          packageCoverage={model.package.customCoverage}
+                          intl={intl}
+                        />
+                      </KeyValueLabel>
+                    </div>
+                  )}
                 </div>
               )}
 

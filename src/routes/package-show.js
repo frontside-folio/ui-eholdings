@@ -44,6 +44,12 @@ class PackageShowRoute extends Component {
 
   toggleSelected = () => {
     let { model, updatePackage } = this.props;
+    // In order to deselect a package that has custom-coverage active you have to remove all custom coverage
+    // the user is promoted in the ui via a warning in a modal that this behavior will take place
+    if (model.customCoverage) {
+      model.customCoverage.beginCoverage = null;
+      model.customCoverage.endCoverage = null;
+    }
     model.isSelected = !model.isSelected;
     model.selectedCount = model.isSelected ? model.titleCount : 0;
 
@@ -61,6 +67,12 @@ class PackageShowRoute extends Component {
     model.visibilityData.isHidden = !model.visibilityData.isHidden;
     updatePackage(model);
   };
+  customCoverageSubmitted = (values) => {
+    let { model, updatePackage } = this.props;
+    model.customCoverage.beginCoverage = !values.beginCoverage ? null : moment(values.beginCoverage).format('YYYY-MM-DD');
+    model.customCoverage.endCoverage = !values.endCoverage ? null : moment(values.endCoverage).format('YYYY-MM-DD');
+    updatePackage(model);
+  }
 
   fetchPackageTitles = (page) => {
     let { match, getPackageTitles } = this.props;

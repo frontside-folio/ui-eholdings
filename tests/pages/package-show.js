@@ -90,9 +90,9 @@ export default {
 
   clickCustomCoverageAddButton() {
     return convergeOn(() => {
-      expect($('[data-test-eholdings-package-details-custom-coverage-button] button')).to.exist;
+      expect($('[data-test-eholdings-custom-coverage-date-add-button] button')).to.exist;
     }).then(() => (
-      $('[data-test-eholdings-package-details-custom-coverage-button] button').click()
+      $('[data-test-eholdings-custom-coverage-date-add-button] button').click()
     ));
   },
 
@@ -189,7 +189,7 @@ export default {
   },
 
   get $customCoverageAddButton() {
-    return $('[data-test-eholdings-package-details-custom-coverage-button] button');
+    return $('[data-test-eholdings-custom-coverage-date-add-button] button');
   },
 
   get $beginDateField() {

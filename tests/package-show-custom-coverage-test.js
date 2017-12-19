@@ -34,6 +34,25 @@ describeApplication('PackageShowCustomCoverage', () => {
     });
   });
 
+  describe('visting the packshow page and package is not selected', () => {
+    beforeEach(function () {
+      pkg = this.server.create('package', {
+        provider,
+        name: 'Cool Package',
+        contentType: 'ebook',
+        isSelected: false
+      });
+
+      return this.visit(`/eholdings/packages/${pkg.id}`, () => {
+        expect(PackageShowPage.$root).to.exist;
+      });
+    });
+
+    it('should not display custom coverage', () => {
+      expect(PackageShowPage.customCoverage).to.equal('');
+    });
+  });
+
   describe('visiting the package show page with custom coverage', () => {
     beforeEach(function () {
       let customCoverage = this.server.create('custom-coverage', {

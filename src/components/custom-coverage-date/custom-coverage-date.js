@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 
 import Datepicker from '@folio/stripes-components/lib/Datepicker';
 import IconButton from '@folio/stripes-components/lib/IconButton';
@@ -20,11 +19,14 @@ class CustomCoverageDate extends Component {
     onSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool,
     initialize: PropTypes.func,
-    isPending: PropTypes.bool
+    isPending: PropTypes.bool,
+    deleteCustomCoverage: PropTypes.func,
+    error: PropTypes.string,
+    anyTouched: PropTypes.bool
   }
 
   static contextTypes = {
-    intl: PropTypes.object
+    intl: PropTypes.object,
   }
 
   state = {
@@ -43,10 +45,28 @@ class CustomCoverageDate extends Component {
     );
   }
 
+  /**
+   * TODO:
+   * Fix Bug ::
+   * When deleting multiple coverages if you start at the top of the list
+   * and delete that coverage date you will see for a split second that
+   * the date you are deleting is eiher duplicated or overiddes the one
+   * below it before it is actually deleted.
+   */
+
+  handleDeleteCustomCoverage = (beginCoverage, endCoverage) => {
+    this.setState({
+      isEditing: false
+    }, () => {
+      this.props.deleteCustomCoverage(beginCoverage, endCoverage);
+    });
+  }
+
   handleEditCustomCoverage = (event) => {
-    let isEditing = !this.state.isEditing;
     event.preventDefault();
+    let isEditing = !this.state.isEditing;
     this.setState({ isEditing });
+    this.props.initialize(this.props.initialValues);
   }
 
   handleCancelCustomCoverage = (event) => {
@@ -57,32 +77,25 @@ class CustomCoverageDate extends Component {
     this.props.initialize(this.props.initialValues);
   }
 
-  handleDeleteCustomCoverage = (event) => {
-    event.preventDefault();
-    let data = {
-      beginCoverage: '',
-      endCoverage: ''
-    };
-
-    this.handleSubmit(data);
-  }
-
   handleSubmit = (data) => {
     this.setState({
       isEditing: false
     });
+    if (this.props.pristine) {
+      return;
+    }
     this.props.onSubmit(data);
   }
 
 
   render() {
-    let { pristine, isPending } = this.props;
+    let { pristine, isPending, error, anyTouched } = this.props;
     let { intl } = this.context;
-
     const { beginCoverage, endCoverage } = this.props.initialValues;
+
     if (this.state.isEditing) {
       return (
-        <form onSubmit={this.props.handleSubmit(this.handleSubmit)}>
+        <form onSubmit={this.handleSubmit}>
           <div
             data-test-eholdings-package-details-custom-coverage-inputs
             className={styles['custom-coverage-form-editing']}
@@ -104,10 +117,11 @@ class CustomCoverageDate extends Component {
               </div>
               <div className={styles['custom-coverage-date-clear-row']}>
                 {this.props.initialValues.beginCoverage && (
-                  <IconButton icon="trashBin" onClick={this.handleDeleteCustomCoverage} size="small" />
+                  <IconButton icon="trashBin" onClick={() => this.handleDeleteCustomCoverage(beginCoverage, endCoverage)} size="small" />
                 )}
               </div>
             </div>
+            <div className={styles['custom-coverage-error']}>{anyTouched && error}</div>
             <div className={styles['custom-coverage-action-buttons']}>
               <div data-test-eholdings-package-details-cancel-custom-coverage-button>
                 <Button disabled={isPending} type="button" role="button" buttonStyle="secondary" onClick={this.handleCancelCustomCoverage}>
@@ -139,7 +153,7 @@ class CustomCoverageDate extends Component {
     } else {
       return (
         <div className={styles['custom-coverage-form']}>
-          <div data-test-eholdings-package-details-custom-coverage-button>
+          <div data-test-eholdings-custom-coverage-date-add-button>
             <Button
               type="button"
               onClick={this.handleEditCustomCoverage}
@@ -157,15 +171,16 @@ class CustomCoverageDate extends Component {
 // the values from the from are passed into this function and then
 // validated based on the matching field with the same 'name' as value
 function validate(values, props) {
-  let dateFormat = props.intl.formatters.getDateTimeFormat().format();
   const errors = {};
 
-  if (!values.beginCoverage || !moment(values.beginCoverage).isValid()) {
-    errors.beginCoverage = `Enter Date in ${dateFormat} format.`;
-  }
+  if (props.customValidators) {
+    props.customValidators.forEach((validator) => {
+      let validationResult = validator.validate(values);
 
-  if (values.endCoverage && moment(values.beginCoverage).isAfter(moment(values.endCoverage))) {
-    errors.beginCoverage = 'Start Date must be before End Date';
+      Object.keys(validationResult).forEach((key) => {
+        errors[`${key}`] = validationResult[`${key}`];
+      });
+    });
   }
 
   return errors;

@@ -4,9 +4,28 @@ import { convergeOn } from '../it-will';
 import { advancedFillIn } from './helpers';
 import { triggerChange } from '../helpers';
 
+function createCoverageEditRowObject(element) {
+  let $scope = $(element);
+
+  return {
+    get beginCoverage() {
+      return $scope.find('[data-test-eholdings-package-details-custom-begin-coverage]').val();
+    },
+
+    get endCoverage() {
+      return $scope.find('[data-test-eholdings-package-details-custom-end-coverage]').val();
+    }
+  };
+}
+
 export default {
   get $root() {
     return $('[data-test-eholdings-details-view="resource"]');
+  },
+
+  get customCoverageEditList() {
+    return $('[data-test-eholdings-package-title-details-edit-custom-coverage-form] [data-test-eholdings-package-details-custom-coverage-inputs]')
+      .toArray().map(createCoverageEditRowObject);
   },
 
   get titleName() {
@@ -125,6 +144,10 @@ export default {
     return $('[data-test-eholdings-contributors-list-item]').toArray().map(item => $(item).text());
   },
 
+  get customCoveragesListItems() {
+    return $('[data-test-eholdings-customer-resource-custom-coverages-list] li').toArray().map(item => $(item).text());
+  },
+
   get $backButton() {
     return $('[data-test-eholdings-customer-resource-show-back-button] button');
   },
@@ -135,6 +158,26 @@ export default {
 
   get $deselectFinalTitleWarning() {
     return $('[data-test-eholdings-deselect-final-title-warning]');
+  },
+
+  get $customCoverageAddButton() {
+    return $('[data-test-eholdings-custom-coverage-date-add-button] button');
+  },
+
+  get $customCoverageAddRowButton() {
+    return $('[data-test-eholdings-custom-coverage-date-add-row-button] button');
+  },
+
+  get $customCoverageEditButton() {
+    return $('[data-test-eholdings-package-details-edit-custom-coverage-button] button');
+  },
+
+  get $customCoveragesList() {
+    return $('[data-test-eholdings-customer-resource-custom-coverages-list]');
+  },
+
+  get $customCoveragesEditForm() {
+    return $('[data-test-eholdings-package-title-details-edit-custom-coverage-form]');
   },
 
   confirmDeselection() {
@@ -240,5 +283,13 @@ export default {
 
   get validationErrorOnSelect() {
     return $('[data-test-eholdings-customer-resource-custom-embargo-select] [class^="feedbackError"]').text();
+  },
+
+  clickCustomCoverageEditButton() {
+    return convergeOn(() => {
+      expect($('[data-test-eholdings-package-details-edit-custom-coverage-button]')).to.exist;
+    }).then(() => (
+      $('[data-test-eholdings-package-details-edit-custom-coverage-button] button').click()
+    ));
   }
 };

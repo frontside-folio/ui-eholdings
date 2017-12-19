@@ -74,5 +74,14 @@ export default Factory.extend({
       customerResource.update('managedCoverages', managedCoverages.map(item => item.toJSON()));
       customerResource.save();
     }
+
+    if (!customerResource.customCoverages) {
+      let customCoverages = server.createList('custom-coverage', 1, {
+        beginCoverage: null,
+        endCoverage: null
+      });
+      customerResource.update('customCoverages', customCoverages.map(item => item.toJSON()));
+      customerResource.save();
+    }
   }
 });

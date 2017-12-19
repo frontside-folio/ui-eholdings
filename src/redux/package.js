@@ -1,3 +1,4 @@
+// import { reducer as formReducer } from 'redux-form';
 import model, { hasMany } from './model';
 
 class Package {

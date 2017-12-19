@@ -4,7 +4,9 @@
 .custom-coverage-form-editing {
   padding: 0.5em;
 }
-
+.custom-coverage-error {
+  color: var(--error);
+}
 .custom-coverage-form-editing {
   background: #e6f3ff;
 }
