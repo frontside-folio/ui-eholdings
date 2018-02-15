@@ -17,13 +17,15 @@ import { isBookPublicationType, isValidCoverageList } from './utilities';
 import Modal from './modal';
 import styles from './styles.css';
 import CustomEmbargoForm from './custom-embargo';
+import CoverageForm from './coverage-form';
 
 export default class CustomerResourceShow extends Component {
   static propTypes = {
     model: PropTypes.object.isRequired,
     toggleSelected: PropTypes.func.isRequired,
     toggleHidden: PropTypes.func.isRequired,
-    customEmbargoSubmitted: PropTypes.func.isRequired
+    customEmbargoSubmitted: PropTypes.func.isRequired,
+    coverageSubmitted: PropTypes.func.isRequired
   };
 
   static contextTypes = {
@@ -68,7 +70,7 @@ export default class CustomerResourceShow extends Component {
   };
 
   render() {
-    let { model, customEmbargoSubmitted } = this.props;
+    let { model, customEmbargoSubmitted, coverageSubmitted } = this.props;
     let { router, queryParams } = this.context;
     let { showSelectionModal, resourceSelected, resourceHidden } = this.state;
 
@@ -83,6 +85,14 @@ export default class CustomerResourceShow extends Component {
       model.customEmbargoPeriod.embargoValue;
     let customEmbargoValue = model.customEmbargoPeriod && model.customEmbargoPeriod.embargoValue;
     let customEmbargoUnit = model.customEmbargoPeriod && model.customEmbargoPeriod.embargoUnit;
+
+    let customCoverages = model.customCoverages;
+    if (customCoverages.length === 0) {
+      customCoverages.push({
+        beginCoverage: '',
+        endCoverage: ''
+      });
+    }
 
     return (
       <div>
@@ -225,6 +235,14 @@ export default class CustomerResourceShow extends Component {
                       )}
                     </Layout>
                   </label>
+
+                  <hr />
+
+                  <CoverageForm
+                    initialValues={{ customCoverages }}
+                    onSubmit={coverageSubmitted}
+                    isPending={model.update.isPending && 'customCoverages' in model.update.changedAttributes}
+                  />
 
                   <hr />
                   <KeyValueLabel label="Custom Embargo Period">
