@@ -223,7 +223,11 @@ const validate = (values) => {
   values.customCoverages.forEach((dateRange, index) => {
     let dateRangeErrors = {};
 
-    if (dateRange.beginCoverage && !moment(dateRange.beginCoverage).isValid()) {
+    if (index === 0 && (dateRange.beginCoverage && !moment(dateRange.beginCoverage).isValid())) {
+      dateRangeErrors.beginCoverage = 'Enter date in the right format.';
+    }
+
+    if (index > 0 && (!dateRange.beginCoverage || !moment(dateRange.beginCoverage).isValid())) {
       dateRangeErrors.beginCoverage = 'Enter date in the right format.';
     }
 
