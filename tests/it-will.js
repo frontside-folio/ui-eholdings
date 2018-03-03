@@ -42,7 +42,7 @@ function itOnly(name, assertion) {
 
 function itStill(name, assertion, time = 50) {
   return !assertion ? it.immediately(name) :
-    it.immediately(name, _convergeOn(assertion, true, time));
+    it.immediately(name, _convergeOn(assertion, time, true));
 }
 
 function _convergeOn(...args) {
@@ -85,31 +85,56 @@ function _convergeOn(...args) {
  * @param {number} time - milliseconds to check assertion
  * @returns {Promise} resolves if assertion passes at least once.
  */
-export function convergeOn(assertion, invert, time) {
-  const test = this;
-  const start = Date.now();
-  const timeout = time || (test && test.timeout ? test.timeout() : 2000);
-  const interval = 10;
+export function convergeOn(assertion, timeout = 2000, always = false) {
+  let context = this;
+  let start = Date.now();
+  let interval = 10;
+
+  // track various stats
+  let stats = {
+    start,
+    runs: 0,
+    end: start,
+    elapsed: 0,
+    always,
+    timeout,
+    value: undefined
+  };
 
   return new Promise((resolve, reject) => {
     (function loop() {
-      const ellapsed = Date.now() - start;
-      const doLoop = ellapsed + interval < timeout;
+      // track stats
+      stats.runs += 1;
 
       try {
-        const ret = assertion.call(test);
+        let results = assertion.call(context);
 
-        if (invert && doLoop) {
-          window.setTimeout(loop, interval);
-        } else if (ret && typeof ret.then === 'function') {
-          ret.then(resolve);
+        // the timeout calculation comes after the assertion so that
+        // the assertion's execution time is accounted for
+        let doLoop = Date.now() - start < timeout;
+
+        if (always && doLoop) {
+          setTimeout(loop, interval);
+        } else if (results === false) {
+          throw new Error('convergent assertion returned `false`');
+        } else if (!always && !doLoop) {
+          throw new Error(
+            'convergent assertion was successful, ' +
+            `but exceeded the ${timeout}ms timeout`
+          );
         } else {
-          resolve();
+          // calculate some stats right before resolving with them
+          stats.end = Date.now();
+          stats.elapsed = stats.end - start;
+          stats.value = results;
+          resolve(stats);
         }
       } catch (error) {
-        if (!invert && doLoop) {
-          window.setTimeout(loop, interval);
-        } else if (invert || !doLoop) {
+        let doLoop = Date.now() - start < timeout;
+
+        if (!always && doLoop) {
+          setTimeout(loop, interval);
+        } else if (always || !doLoop) {
           reject(error);
         }
       }
