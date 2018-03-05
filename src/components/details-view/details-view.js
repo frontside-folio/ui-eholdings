@@ -8,7 +8,11 @@ import PaneHeader from '@folio/stripes-components/lib/PaneHeader';
 import Icon from '@folio/stripes-components/lib/Icon';
 import IconButton from '@folio/stripes-components/lib/IconButton';
 import PaneMenu from '@folio/stripes-components/lib/PaneMenu';
+import Modal from '@folio/stripes-components/lib/Modal';
+import Link from 'react-router-dom/Link';
 
+import KeyValueLabel from '../key-value-label';
+import SearchForm from '../search-form';
 import styles from './details-view.css';
 
 const cx = classNames.bind(styles);
@@ -48,7 +52,8 @@ export default class DetailsView extends Component {
   };
 
   state = {
-    isSticky: false
+    isSticky: false,
+    showListSearchModal: false
   };
 
   componentDidMount() {
@@ -62,6 +67,10 @@ export default class DetailsView extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleLayout);
+  }
+
+  toggleListSearchModal = () => {
+    this.setState({ showListSearchModal: !this.state.showListSearchModal });
   }
 
   /**
@@ -234,6 +243,10 @@ export default class DetailsView extends Component {
                 <h3>
                   {capitalize(listType)}
                 </h3>
+                <IconButton
+                  icon="search"
+                  onClick={this.toggleListSearchModal}
+                />
               </div>
 
               <div ref={(n) => { this.$list = n; }} className={styles.list}>
@@ -242,6 +255,18 @@ export default class DetailsView extends Component {
             </div>
           )}
         </div>
+        <Modal
+          open={this.state.showListSearchModal}
+          size="medium"
+          label={`Filter ${listType}`}
+          closeOnBackgroundClick
+        >
+          <SearchForm
+            searchType={listType}
+            onSearch={() => {}}
+            displaySearchTypeSwitcher={false}
+          />
+        </Modal>
       </div>
     );
   }
