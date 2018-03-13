@@ -6,6 +6,9 @@ import chaiJquery from 'chai-jquery';
 import $ from 'jquery';
 import { render, unmountComponentAtNode } from 'react-dom';
 import Convergence from '@bigtest/convergence';
+import axe from 'axe-core';
+import { it } from '@bigtest/mocha';
+import { expect } from 'chai';
 import startMirage from '../mirage/start';
 import TestHarness from './harness';
 
@@ -97,4 +100,38 @@ function visit(context, path, convergenceCheck) {
     .once(convergenceCheck)
     .timeout(context.timeout())
     .run();
+}
+
+// Print the violation name. This does not show which element is violating
+function printA11yViolations(results) {
+  return results.violations.map(violation => ` ${violation.help}`);
+}
+
+// Wrap Axe in a promise for a nicer API
+let runAxe = new Promise((resolve, reject) => {
+  axe.run((err, results) => {
+    if (err) reject(err);
+    resolve(results);
+  });
+});
+
+export function checkA11y() {
+  describe('Axe accessibility check', () => {
+    let err, results;
+
+    beforeEach(() => {
+      err = results = null;
+      return runAxe.then(axeResults => {
+        results = axeResults;
+      }).catch(error => {
+        err = error;
+      });
+    });
+
+    it('passes axe accessibility check', () => {
+      expect(err).to.not.exist;
+      expect(results).to.not.be.empty;
+      expect(results.violations.length).to.have.lengthOf(0, `${printA11yViolations(results)}`);
+    });
+  });
 }
