@@ -11,6 +11,7 @@ import { it } from '@bigtest/mocha';
 import { expect } from 'chai';
 import startMirage from '../mirage/start';
 import TestHarness from './harness';
+import AxeResults from './axe-results';
 
 // use jquery matchers
 chai.use((chai, utils) => chaiJquery(chai, utils, $)); // eslint-disable-line no-shadow
@@ -102,11 +103,6 @@ function visit(context, path, convergenceCheck) {
     .run();
 }
 
-// Print the violation name. This does not show which element is violating
-function printA11yViolations(results) {
-  return results.violations.map(violation => ` ${violation.help}`);
-}
-
 // Wrap Axe in a promise for a nicer API
 let runAxe = new Promise((resolve, reject) => {
   axe.run((err, results) => {
@@ -122,7 +118,7 @@ export function checkA11y() {
     beforeEach(() => {
       err = results = null;
       return runAxe.then(axeResults => {
-        results = axeResults;
+        results = new AxeResults(axeResults);
       }).catch(error => {
         err = error;
       });
@@ -131,7 +127,7 @@ export function checkA11y() {
     it('passes axe accessibility check', () => {
       expect(err).to.not.exist;
       expect(results).to.not.be.empty;
-      expect(results.violations.length).to.have.lengthOf(0, `${printA11yViolations(results)}`);
+      expect(results.violationCount).to.have.equal(0, results.printViolations());
     });
   });
 }

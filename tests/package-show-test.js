@@ -1,7 +1,7 @@
 import { beforeEach, describe, it } from '@bigtest/mocha';
 import { expect } from 'chai';
 
-import { describeApplication, checkA11y } from './helpers';
+import { describeApplication } from './helpers';
 import PackageShowPage from './pages/package-show';
 
 describeApplication('PackageShow', () => {
@@ -31,8 +31,6 @@ describeApplication('PackageShow', () => {
         expect(PackageShowPage.$root).to.exist;
       });
     });
-
-    checkA11y();
 
     it('displays the package name in the pane header', () => {
       expect(PackageShowPage.paneTitle).to.equal('Cool Package');

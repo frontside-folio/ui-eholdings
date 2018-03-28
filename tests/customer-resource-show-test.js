@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, beforeEach, it } from '@bigtest/mocha';
 
-import { describeApplication } from './helpers';
+import { describeApplication, checkA11y } from './helpers';
 import ResourcePage from './pages/customer-resource-show';
 import NavigationModal from './pages/navigation-modal';
 
@@ -63,6 +63,8 @@ describeApplication('CustomerResourceShow', () => {
         expect(ResourcePage.$root).to.exist;
       });
     });
+
+    checkA11y();
 
     it('displays the title name in the pane header', () => {
       expect(ResourcePage.paneTitle).to.equal('Best Title Ever');
