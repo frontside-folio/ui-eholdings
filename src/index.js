@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Route, Switch, Redirect } from './router';
 import { reducer, epics } from './redux';
+import a11yFocus from './utils/a11y-focus';
 
 import ApplicationRoute from './routes/application';
 import SettingsRoute from './routes/settings';
@@ -72,15 +73,15 @@ export default class EHoldings extends Component {
       <Route path={rootPath} component={ApplicationRoute}>
         <Route path={`${rootPath}/:type?/:id?`} component={SearchRoute}>
           <Switch>
-            <Route path={`${rootPath}/providers/:providerId`} exact component={ProviderShow} />
-            <Route path={`${rootPath}/packages/new`} exact component={PackageCreate} />
-            <Route path={`${rootPath}/packages/:packageId`} exact component={PackageShow} />
-            <Route path={`${rootPath}/packages/:packageId/edit`} exact component={PackageEdit} />
-            <Route path={`${rootPath}/titles/new`} exact component={TitleCreate} />
-            <Route path={`${rootPath}/titles/:titleId`} exact component={TitleShow} />
-            <Route path={`${rootPath}/titles/:titleId/edit`} exact component={TitleEdit} />
-            <Route path={`${rootPath}/resources/:id`} exact component={ResourceShow} />
-            <Route path={`${rootPath}/resources/:id/edit`} exact component={ResourceEdit} />
+            <Route path={`${rootPath}/providers/:providerId`} exact component={a11yFocus(ProviderShow)} />
+            <Route path={`${rootPath}/packages/new`} exact component={a11yFocus(PackageCreate)} />
+            <Route path={`${rootPath}/packages/:packageId`} exact component={a11yFocus(PackageShow)} />
+            <Route path={`${rootPath}/packages/:packageId/edit`} exact component={a11yFocus(PackageEdit)} />
+            <Route path={`${rootPath}/titles/new`} exact component={a11yFocus(TitleCreate)} />
+            <Route path={`${rootPath}/titles/:titleId`} exact component={a11yFocus(TitleShow)} />
+            <Route path={`${rootPath}/titles/:titleId/edit`} exact component={a11yFocus(TitleEdit)} />
+            <Route path={`${rootPath}/resources/:id`} exact component={a11yFocus(ResourceShow)} />
+            <Route path={`${rootPath}/resources/:id/edit`} exact component={a11yFocus(ResourceEdit)} />
             <Route render={() => (<Redirect to={`${rootPath}?searchType=providers`} />)} />
           </Switch>
         </Route>
