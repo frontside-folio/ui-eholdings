@@ -65,7 +65,7 @@ jobs:
           at: ~/
       - run:
           name: Run tests
-          command: yarn test --karma.singleRun --karma.browsers=bs_safari_11
+          command: yarn test --karma.singleRun --karma.browsers=bs_safari_10
       - store_test_results:
           path: ./artifacts/junit
       - store_artifacts:

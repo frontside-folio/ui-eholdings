@@ -12,12 +12,12 @@ module.exports = (config) => {
         base: 'Chrome',
         flags: ['--no-sandbox']
       },
-      bs_safari_11: {
+      bs_safari_10: {
         base: 'BrowserStack',
         os: 'OS X',
-        os_version: 'High Sierra',
+        os_version: 'Sierra',
         browser: 'safari',
-        browser_version: '11.0'
+        browser_version: '10.1'
       },
       bs_firefox_mac: {
         base: 'BrowserStack',
