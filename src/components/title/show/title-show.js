@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
+  Button,
   IconButton,
   KeyValue,
-  PaneMenu
+  PaneMenu,
+  Select
 } from '@folio/stripes-components';
 
 import { processErrors } from '../../utilities';
@@ -14,140 +16,207 @@ import IdentifiersList from '../../identifiers-list';
 import ContributorsList from '../../contributors-list';
 import DetailsViewSection from '../../details-view-section';
 import Toaster from '../../toaster';
+import Modal from '../../modal';
 import styles from './title-show.css';
 
-export default function TitleShow({ model }, { queryParams, router }) {
-  let actionMenuItems = [];
+export default class TitleShow extends Component {
+  static propTypes = {
+    model: PropTypes.object.isRequired,
+    customPackageAdditionSubmitted: PropTypes.func.isRequired
+  };
 
-  if (model.isTitleCustom) {
-    actionMenuItems.push({
-      label: 'Edit',
-      to: {
-        pathname: `/eholdings/titles/${model.id}/edit`,
-        search: router.route.location.search,
-        state: { eholdings: true }
-      }
+  static contextTypes = {
+    router: PropTypes.object,
+    queryParams: PropTypes.object
+  };
+
+  state = {
+    showCustomPackageModal: false,
+  };
+
+  toggleCustomPackageModal = () => {
+    this.setState({
+      showCustomPackageModal: !this.state.showCustomPackageModal
     });
+  };
+
+  submitCustomPackageModal = () => {
+    this.props.customPackageAdditionSubmitted();
   }
 
-  if (queryParams.searchType) {
-    actionMenuItems.push({
-      label: 'Full view',
-      to: {
-        pathname: `/eholdings/titles/${model.id}`,
-        state: { eholdings: true }
-      },
-      className: styles['full-view-link']
-    });
-  }
+  render() {
+    let { model } = this.props;
+    let {
+      queryParams,
+      router
+    } = this.context;
+    let { showCustomPackageModal } = this.state;
+    let actionMenuItems = [];
 
-  let lastMenu;
-  if (model.isTitleCustom) {
-    lastMenu = (
-      <PaneMenu>
-        <IconButton
-          data-test-eholdings-title-edit-link
-          icon="edit"
-          ariaLabel={`Edit ${model.name}`}
-          to={{
-            pathname: `/eholdings/titles/${model.id}/edit`,
-            search: router.route.location.search,
-            state: { eholdings: true }
-          }}
+    if (model.isTitleCustom) {
+      actionMenuItems.push({
+        label: 'Edit',
+        to: {
+          pathname: `/eholdings/titles/${model.id}/edit`,
+          search: router.route.location.search,
+          state: { eholdings: true }
+        }
+      });
+    }
+
+    if (queryParams.searchType) {
+      actionMenuItems.push({
+        label: 'Full view',
+        to: {
+          pathname: `/eholdings/titles/${model.id}`,
+          state: { eholdings: true }
+        },
+        className: styles['full-view-link']
+      });
+    }
+
+    let lastMenu;
+    if (model.isTitleCustom) {
+      lastMenu = (
+        <PaneMenu>
+          <IconButton
+            data-test-eholdings-title-edit-link
+            icon="edit"
+            ariaLabel={`Edit ${model.name}`}
+            href={{
+              pathname: `/eholdings/titles/${model.id}/edit`,
+              search: router.route.location.search,
+              state: { eholdings: true }
+            }}
+          />
+        </PaneMenu>
+      );
+    }
+
+    return (
+      <div>
+        <Toaster toasts={processErrors(model)} position="bottom" />
+
+        <DetailsView
+          type="title"
+          model={model}
+          paneTitle={model.name}
+          actionMenuItems={actionMenuItems}
+          lastMenu={lastMenu}
+          bodyContent={(
+            <DetailsViewSection label="Title information">
+              <ContributorsList data={model.contributors} />
+
+              {model.publisherName && (
+                <KeyValue label="Publisher">
+                  <div data-test-eholdings-title-show-publisher-name>
+                    {model.publisherName}
+                  </div>
+                </KeyValue>
+              )}
+
+              {model.publicationType && (
+                <KeyValue label="Publication Type">
+                  <div data-test-eholdings-title-show-publication-type>
+                    {model.publicationType}
+                  </div>
+                </KeyValue>
+              )}
+
+              <IdentifiersList data={model.identifiers} />
+
+              {model.subjects.length > 0 && (
+                <KeyValue label="Subjects">
+                  <div data-test-eholdings-title-show-subjects-list>
+                    {model.subjects.map(subjectObj => subjectObj.subject).join('; ')}
+                  </div>
+                </KeyValue>
+              )}
+
+              <KeyValue label="Peer reviewed">
+                <div data-test-eholdings-peer-reviewed-field>
+                  {model.isPeerReviewed ? 'Yes' : 'No'}
+                </div>
+              </KeyValue>
+
+              <KeyValue label="Title type">
+                <div data-test-eholdings-title-details-type>
+                  {model.isTitleCustom ? 'Custom' : 'Managed'}
+                </div>
+              </KeyValue>
+
+              {model.description && (
+                <KeyValue label="Description">
+                  <div data-test-eholdings-description-field>
+                    {model.description}
+                  </div>
+                </KeyValue>
+              )}
+
+              <div className={styles['add-to-custom-package-button']}>
+                <Button
+                  data-test-eholdings-add-to-custom-package-button
+                  onClick={this.toggleCustomPackageModal}
+                >
+                  Add to custom package
+                </Button>
+              </div>
+            </DetailsViewSection>
+          )}
+          listType="packages"
+          renderList={scrollable => (
+            <ScrollView
+              itemHeight={70}
+              items={model.resources}
+              scrollable={scrollable}
+              data-test-query-list="title-packages"
+            >
+              {item => (
+                <PackageListItem
+                  link={`/eholdings/resources/${item.id}`}
+                  packageName={item.packageName}
+                  item={item}
+                  headingLevel='h4'
+                />
+              )}
+            </ScrollView>
+          )}
         />
-      </PaneMenu>
+
+        <Modal
+          open={showCustomPackageModal}
+          size="small"
+          label="Add title to custom package"
+          scope="root"
+          id="eholdings-custom-package-modal"
+          footer={(
+            <div>
+              <Button
+                buttonStyle="primary"
+                onClick={this.submitCustomPackageModal}
+                data-test-eholdings-custom-package-modal-submit
+              >
+                Submit
+              </Button>
+              <Button
+                onClick={this.toggleCustomPackageModal}
+                data-test-eholdings-custom-package-modal-cancel
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
+        >
+          <Select
+            label="Package"
+            dataOptions={[
+              { value: 1, label: 'Package 1' },
+              { value: 2, label: 'Package 2' },
+              { value: 3, label: 'Package 3' }
+           ]}
+          />
+        </Modal>
+      </div>
     );
   }
-
-  return (
-    <div>
-      <Toaster toasts={processErrors(model)} position="bottom" />
-
-      <DetailsView
-        type="title"
-        model={model}
-        paneTitle={model.name}
-        actionMenuItems={actionMenuItems}
-        lastMenu={lastMenu}
-        bodyContent={(
-          <DetailsViewSection label="Title information">
-            <ContributorsList data={model.contributors} />
-
-            {model.publisherName && (
-              <KeyValue label="Publisher">
-                <div data-test-eholdings-title-show-publisher-name>
-                  {model.publisherName}
-                </div>
-              </KeyValue>
-            )}
-
-            {model.publicationType && (
-              <KeyValue label="Publication Type">
-                <div data-test-eholdings-title-show-publication-type>
-                  {model.publicationType}
-                </div>
-              </KeyValue>
-            )}
-
-            <IdentifiersList data={model.identifiers} />
-
-            {model.subjects.length > 0 && (
-              <KeyValue label="Subjects">
-                <div data-test-eholdings-title-show-subjects-list>
-                  {model.subjects.map(subjectObj => subjectObj.subject).join('; ')}
-                </div>
-              </KeyValue>
-            )}
-
-            <KeyValue label="Peer reviewed">
-              <div data-test-eholdings-peer-reviewed-field>
-                {model.isPeerReviewed ? 'Yes' : 'No'}
-              </div>
-            </KeyValue>
-
-            <KeyValue label="Title type">
-              <div data-test-eholdings-title-details-type>
-                {model.isTitleCustom ? 'Custom' : 'Managed'}
-              </div>
-            </KeyValue>
-
-            {model.description && (
-              <KeyValue label="Description">
-                <div data-test-eholdings-description-field>
-                  {model.description}
-                </div>
-              </KeyValue>
-            )}
-          </DetailsViewSection>
-        )}
-        listType="packages"
-        renderList={scrollable => (
-          <ScrollView
-            itemHeight={70}
-            items={model.resources}
-            scrollable={scrollable}
-            data-test-query-list="title-packages"
-          >
-            {item => (
-              <PackageListItem
-                link={`/eholdings/resources/${item.id}`}
-                packageName={item.packageName}
-                item={item}
-                headingLevel='h4'
-              />
-            )}
-          </ScrollView>
-        )}
-      />
-    </div>
-  );
 }
-
-TitleShow.propTypes = {
-  model: PropTypes.object.isRequired
-};
-
-TitleShow.contextTypes = {
-  router: PropTypes.object,
-  queryParams: PropTypes.object
-};

@@ -11,6 +11,11 @@ import {
 import { getComputedStyle } from './helpers';
 import Toast from './toast';
 
+@interactor class AddToCustomPackageModal {
+  submit = clickable('[data-test-eholdings-custom-package-modal-submit]');
+  cancel = clickable('[data-test-eholdings-custom-package-modal-cancel]');
+}
+
 @interactor class TitleShowPage {
   paneTitle = text('[data-test-eholdings-details-view-pane-title]');
   titleName = text('[data-test-eholdings-details-view-name="title"]');
@@ -56,6 +61,9 @@ import Toast from './toast';
   contributorsList = collection('[data-test-eholdings-contributors-list-item]', {
     contributorText: text()
   });
+
+  clickAddToCustomPackageButton = clickable('[data-test-eholdings-add-to-custom-package-button]');
+  customPackageModal = new AddToCustomPackageModal('#eholdings-custom-package-modal');
 }
 
 export default new TitleShowPage('[data-test-eholdings-details-view="title"]');
