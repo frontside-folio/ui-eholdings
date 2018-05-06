@@ -4,8 +4,7 @@ import {
   Button,
   IconButton,
   KeyValue,
-  PaneMenu,
-  Select
+  PaneMenu
 } from '@folio/stripes-components';
 
 import { processErrors } from '../../utilities';
@@ -17,12 +16,15 @@ import ContributorsList from '../../contributors-list';
 import DetailsViewSection from '../../details-view-section';
 import Toaster from '../../toaster';
 import Modal from '../../modal';
+import AddForm from './add-form';
 import styles from './title-show.css';
+
 
 export default class TitleShow extends Component {
   static propTypes = {
     model: PropTypes.object.isRequired,
-    customPackageAdditionSubmitted: PropTypes.func.isRequired
+    customPackages: PropTypes.object.isRequired,
+    customPackageAdditionSubmitted: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
@@ -42,10 +44,13 @@ export default class TitleShow extends Component {
 
   submitCustomPackageModal = () => {
     this.props.customPackageAdditionSubmitted();
-  }
+  };
 
   render() {
-    let { model } = this.props;
+    let {
+      model,
+      customPackages
+    } = this.props;
     let {
       queryParams,
       router
@@ -74,6 +79,11 @@ export default class TitleShow extends Component {
         className: styles['full-view-link']
       });
     }
+
+    let customPackageOptions = customPackages.map(pkg => ({
+      label: pkg.name,
+      value: pkg.id
+    }));
 
     let lastMenu;
     if (model.isTitleCustom) {
@@ -207,13 +217,12 @@ export default class TitleShow extends Component {
             </div>
           )}
         >
-          <Select
-            label="Package"
-            dataOptions={[
-              { value: 1, label: 'Package 1' },
-              { value: 2, label: 'Package 2' },
-              { value: 3, label: 'Package 3' }
-           ]}
+          <AddForm
+            options={customPackageOptions}
+            onSubmit={this.props.customPackageAdditionSubmitted}
+            initialValues={{
+              packageId: customPackageOptions.length && customPackageOptions[0].id
+            }}
           />
         </Modal>
       </div>

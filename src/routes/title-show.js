@@ -17,6 +17,7 @@ class TitleShowRoute extends Component {
     }).isRequired,
     model: PropTypes.object.isRequired,
     getTitle: PropTypes.func.isRequired,
+    customPackages: PropTypes.object,
     getCustomPackages: PropTypes.func.isRequired,
     createResource: PropTypes.func.isRequired
   };
@@ -25,6 +26,10 @@ class TitleShowRoute extends Component {
     let { match, getTitle } = this.props;
     let { titleId } = match.params;
     getTitle(titleId);
+  }
+
+  componentDidMount() {
+    this.props.getCustomPackages();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -36,8 +41,7 @@ class TitleShowRoute extends Component {
     }
   }
 
-  customPackageAdditionSubmitted = (packageId) => {
-    // console.log('customPackageAdditionSubmitted');
+  customPackageAdditionSubmitted = ({ packageId }) => {
     let { match, createResource } = this.props;
     let { titleId } = match.params;
 
@@ -51,7 +55,7 @@ class TitleShowRoute extends Component {
     return (
       <View
         model={this.props.model}
-        getCustomPackages={this.props.getCustomPackages}
+        customPackages={this.props.customPackages}
         customPackageAdditionSubmitted={this.customPackageAdditionSubmitted}
       />
     );
@@ -59,11 +63,22 @@ class TitleShowRoute extends Component {
 }
 
 export default connect(
-  ({ eholdings: { data } }, { match }) => ({
-    model: createResolver(data).find('titles', match.params.titleId)
-  }), {
+  ({ eholdings: { data } }, { match }) => {
+    let resolver = createResolver(data);
+
+    return {
+      model: resolver.find('titles', match.params.titleId),
+      customPackages: resolver.query('packages', {
+        filter: { custom: true },
+        count: 1000
+      })
+    };
+  }, {
     getTitle: id => Title.find(id, { include: 'resources' }),
-    getCustomPackages: params => Package.query(params),
+    getCustomPackages: () => Package.query({
+      filter: { custom: true },
+      count: 1000
+    }),
     createResource: attrs => Resource.create(attrs)
   }
 )(TitleShowRoute);

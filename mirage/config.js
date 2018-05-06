@@ -128,6 +128,7 @@ export default function configure() {
     let params = req.queryParams;
     let type = params['filter[type]'];
     let selected = params['filter[selected]'];
+    let custom = params['filter[custom]'];
     let filtered = true;
 
     if (params.q && pkg.name) {
@@ -140,6 +141,11 @@ export default function configure() {
 
     if (filtered && selected) {
       filtered = pkg.isSelected.toString() === selected;
+    }
+
+    if (filtered && custom) {
+      // packages don't always have `isCustom` defined
+      filtered = pkg.isCustom ? custom === 'true' : custom === 'false';
     }
 
     return filtered;
@@ -294,6 +300,18 @@ export default function configure() {
     matchingResource.title.update('publisherName', publisherName);
 
     return matchingResource;
+  });
+
+  this.post('/resources', ({ resources, packages }, request) => {
+    let body = JSON.parse(request.requestBody);
+    let customPackage = packages.find(body.data.attributes.packageId);
+    let resource = resources.create({
+      titleId: body.data.attributes.titleId,
+      packageId: customPackage.id,
+      providerId: customPackage.providerId,
+    });
+
+    return resource;
   });
 
   // translation bundle passthrough
