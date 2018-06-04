@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 import { createResolver } from '../redux';
 import Resource from '../redux/resource';
@@ -79,18 +78,10 @@ class ResourceEditRoute extends Component {
 
       updateResource(model);
     } else {
-      model.customCoverages = customCoverages.map((dateRange) => {
-        let beginCoverage = !dateRange.beginCoverage ? null : moment(dateRange.beginCoverage).format('YYYY-MM-DD');
-        let endCoverage = !dateRange.endCoverage ? null : moment(dateRange.endCoverage).format('YYYY-MM-DD');
-
-        return {
-          beginCoverage,
-          endCoverage
-        };
-      });
       model.isSelected = values.isSelected;
       model.url = customUrl;
       model.visibilityData.isHidden = !isVisible;
+      model.customCoverages = customCoverages;
       model.coverageStatement = coverageStatement;
       model.customEmbargoPeriod = {
         embargoValue: customEmbargoValue,

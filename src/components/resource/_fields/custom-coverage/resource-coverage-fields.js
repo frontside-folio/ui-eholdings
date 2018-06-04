@@ -54,6 +54,7 @@ export default class ResourceCoverageFields extends Component {
                     name={`${dateRange}.beginCoverage`}
                     type="text"
                     component={Datepicker}
+                    backendDateStandard="YYYY-MM-DD"
                     label="Start date"
                     id="begin-coverage"
                   />
@@ -66,6 +67,7 @@ export default class ResourceCoverageFields extends Component {
                     name={`${dateRange}.endCoverage`}
                     type="text"
                     component={Datepicker}
+                    backendDateStandard="YYYY-MM-DD"
                     label="End date"
                     id="end-coverage"
                   />

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 import { createResolver } from '../redux';
 import Package from '../redux/package';
@@ -106,18 +105,7 @@ class PackageShowRoute extends Component {
 
   customCoverageSubmitted = (values) => {
     let { model, updatePackage } = this.props;
-    let beginCoverage = '';
-    let endCoverage = '';
-
-    if (values.customCoverages[0]) {
-      beginCoverage = !values.customCoverages[0].beginCoverage ? '' : moment(values.customCoverages[0].beginCoverage).tz('UTC').format('YYYY-MM-DD');
-      endCoverage = !values.customCoverages[0].endCoverage ? '' : moment(values.customCoverages[0].endCoverage).tz('UTC').format('YYYY-MM-DD');
-    }
-
-    model.customCoverage = {
-      beginCoverage,
-      endCoverage
-    };
+    model.customCoverage = values.customCoverages[0];
     updatePackage(model);
   };
 

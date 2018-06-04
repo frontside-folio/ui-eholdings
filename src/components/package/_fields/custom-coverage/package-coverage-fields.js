@@ -63,6 +63,7 @@ export default class PackageCoverageFields extends Component {
                     name={`${dateRange}.beginCoverage`}
                     type="text"
                     component={Datepicker}
+                    backendDateStandard="YYYY-MM-DD"
                     label="Start date"
                   />
                 </div>
@@ -74,6 +75,7 @@ export default class PackageCoverageFields extends Component {
                     name={`${dateRange}.endCoverage`}
                     type="text"
                     component={Datepicker}
+                    backendDateStandard="YYYY-MM-DD"
                     label="End date"
                   />
                 </div>
