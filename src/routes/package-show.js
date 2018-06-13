@@ -106,6 +106,7 @@ class PackageShowRoute extends Component {
         toggleHidden={this.toggleHidden}
         customCoverageSubmitted={this.customCoverageSubmitted}
         toggleAllowKbToAddTitles={this.toggleAllowKbToAddTitles}
+        shouldFocus={this.props.shouldFocus}
       />
     );
   }

@@ -63,9 +63,20 @@ export default class DetailsView extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.handleLayout);
     this.handleLayout();
+
+    if (this.$h2) {
+      this.$h2.focus();
+    }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    let { model } = this.props;
+
+    // if the model just finished loading focus the heading
+    if (!prevProps.model.isLoaded && model.isLoaded) {
+      this.$h2.focus();
+    }
+
     this.handleLayout();
   }
 
@@ -248,7 +259,11 @@ export default class DetailsView extends Component {
         >
           {model.isLoaded ? [
             <div key="header" className={styles.header}>
-              <h2 data-test-eholdings-details-view-name={type}>
+              <h2
+                tabIndex={-1}
+                ref={(h2) => this.$h2 = h2}
+                data-test-eholdings-details-view-name={type}
+              >
                 {paneTitle}
               </h2>
               {paneSub && (

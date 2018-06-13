@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { FormattedNumber } from 'react-intl';
 
+import shouldFocus from '../should-focus';
 import styles from './package-list-item.css';
 import Link from '../link';
 
 const cx = classNames.bind(styles);
 
-export default function PackageListItem({
+function PackageListItem({
   item,
   link,
   active,
@@ -101,3 +102,9 @@ PackageListItem.propTypes = {
   onClick: PropTypes.func,
   headingLevel: PropTypes.string
 };
+
+PackageListItem.contextTypes = {
+  intl: PropTypes.object
+};
+
+export default shouldFocus(PackageListItem);

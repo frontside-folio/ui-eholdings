@@ -157,6 +157,7 @@ export default class PackageShow extends Component {
           type="package"
           model={model}
           paneTitle={model.name}
+          key={model.id}
           actionMenuItems={actionMenuItems}
           lastMenu={(
             <PaneMenu>

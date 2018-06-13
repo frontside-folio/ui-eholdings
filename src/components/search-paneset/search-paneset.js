@@ -43,7 +43,8 @@ export default class SearchPaneset extends React.Component {
   };
 
   state = {
-    hideFilters: this.props.hideFilters
+    hideFilters: this.props.hideFilters,
+    shouldFocusHeader: false
   };
 
   componentWillReceiveProps({ resultsType, location }) {
@@ -59,11 +60,19 @@ export default class SearchPaneset extends React.Component {
         let searchTermChanged = nextSearchParams.q !== searchParams.q;
 
         if (searchTermChanged) {
-          this.setState({ hideFilters: true });
+          this.setState({ hideFilters: true, shouldFocusHeader: true });
         } else {
-          this.setState({ hideFilters: false });
+          this.setState({ hideFilters: false, shouldFocusHeader: false });
         }
       }
+    }
+  }
+
+  // TODO work out how to properly set focus on the packages heading
+  // we weren't seeing this work in chrome at the time of authoring the code
+  componentDidUpdate(prevProps, prevState) {
+    if(!prevState.shouldFocusHeader && this.state.shouldFocusHeader) {
+      this.$title.focus();
     }
   }
 
@@ -157,6 +166,7 @@ export default class SearchPaneset extends React.Component {
                 }}
                 paneTitle={capitalize(resultsType)}
                 paneSub={resultsPaneSub}
+                paneTitleRef={title => this.$title = title}
                 firstMenu={
                   <div className={styles['results-pane-search-toggle']}>
                     <PaneMenu>
