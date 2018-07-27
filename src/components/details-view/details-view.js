@@ -213,13 +213,15 @@ export default class DetailsView extends Component {
 
     let historyState = router.history.location.state;
 
-    let accordionHeader = (
-      listType && <AccordionHeader
-        label={listType}
-        open={isListAccordionOpen}
-        onToggle={this.toggleListAccordion}
-        displayWhenOpen={searchModal}
-      />
+    let accordionHeader = listType && (
+      <div className={!isListAccordionOpen ? cx(styles.sticky, styles.body) : ''}>
+        <AccordionHeader
+          label={listType}
+          open={isListAccordionOpen}
+          onToggle={this.toggleListAccordion}
+          displayWhenOpen={searchModal}
+        />
+      </div>
     );
 
     return (
