@@ -5,6 +5,7 @@ import {
   KeyValue
 } from '@folio/stripes-components';
 import { FormattedNumber, FormattedMessage } from 'react-intl';
+import capitalize from 'lodash/capitalize';
 
 import { processErrors } from '../utilities';
 import DetailsView from '../details-view';
@@ -61,8 +62,8 @@ export default function ProviderShow({
           </Accordion>
         )}
         searchModal={searchModal}
-        listType={listType}
         resultsLength={packages.length}
+        listLabel={capitalize(listType)}
         renderList={scrollable => (
           <QueryList
             type="provider-packages"

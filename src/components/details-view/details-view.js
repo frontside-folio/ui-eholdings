@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import capitalize from 'lodash/capitalize';
+import { FormattedNumber } from 'react-intl';
 
 import {
+  Accordion,
   Icon,
   IconButton,
-  PaneHeader
+  KeyValue,
+  PaneHeader,
+  PaneMenu
 } from '@folio/stripes-components';
 
 import styles from './details-view.css';
@@ -34,15 +37,23 @@ export default class DetailsView extends Component {
       isLoading: PropTypes.bool.isRequired,
       request: PropTypes.object.isRequired
     }).isRequired,
-    paneTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element, PropTypes.node]),
-    paneSub: PropTypes.oneOfType([PropTypes.string, PropTypes.element, PropTypes.node]),
+    paneTitle: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.element,
+      PropTypes.node
+    ]),
+    paneSub: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.element,
+      PropTypes.node
+    ]),
     bodyContent: PropTypes.node.isRequired,
-    listType: PropTypes.string,
     renderList: PropTypes.func,
     actionMenuItems: PropTypes.array,
     lastMenu: PropTypes.node,
     resultsLength: PropTypes.number,
-    searchModal: PropTypes.node
+    searchModal: PropTypes.node,
+    listLabel: PropTypes.node
   };
 
   static contextTypes = {
@@ -52,7 +63,7 @@ export default class DetailsView extends Component {
 
   static defaultProps = {
     searchModal: null
-  }
+  };
 
   state = {
     isSticky: false
@@ -111,31 +122,34 @@ export default class DetailsView extends Component {
    * While scrolling, we need to decide if we should enable or disable
    * the list's "sticky" behavior
    */
-  handleScroll = (e) => {
+  handleScroll = e => {
     let { isSticky } = this.state;
 
     // bail if we shouldn't handle scrolling
     if (!this.shouldHandleScroll) return;
 
     // if the list's child element hits the top, disable isSticky
-    if (this.$list.firstElementChild === e.target &&
-        e.target.scrollTop === 0 && isSticky) {
+    if (
+      this.$list.firstElementChild === e.target &&
+      e.target.scrollTop === 0 &&
+      isSticky
+    ) {
       // prevent scroll logic around bottoming out by scrolling up 1px
       this.$container.scrollTop = this.$container.scrollTop - 1;
       this.setState({ isSticky: false });
 
-    // don't do these calculations when not scrolling the container
+      // don't do these calculations when not scrolling the container
     } else if (e.currentTarget === e.target) {
       let top = e.currentTarget.scrollTop;
       let height = e.currentTarget.offsetHeight;
       let scrollHeight = e.currentTarget.scrollHeight;
       // these will be equal when scrolled all the way down
-      let bottomedOut = (top + height) === scrollHeight;
+      let bottomedOut = top + height === scrollHeight;
 
       // if bottoming out, enable isSticky
       if (bottomedOut && !isSticky) {
         this.setState({ isSticky: true });
-      // if not bottomed out, disable isSticky
+        // if not bottomed out, disable isSticky
       } else if (!bottomedOut && isSticky) {
         this.setState({ isSticky: false });
       }
@@ -148,7 +162,7 @@ export default class DetailsView extends Component {
    * up outside of the list, or when the inner list is scrolled all
    * the way up already.
    */
-  handleWheel = (e) => {
+  handleWheel = e => {
     // this does not need to run if we do not have a list element
     if (!this.$list) return;
 
@@ -169,7 +183,7 @@ export default class DetailsView extends Component {
       type,
       model,
       bodyContent,
-      listType,
+      listLabel,
       renderList,
       paneTitle,
       paneSub,
@@ -179,14 +193,9 @@ export default class DetailsView extends Component {
       searchModal
     } = this.props;
 
-    let {
-      router,
-      queryParams
-    } = this.context;
+    let { router, queryParams } = this.context;
 
-    let {
-      isSticky
-    } = this.state;
+    let { isSticky } = this.state;
 
     let containerClassName = cx('container', {
       locked: isSticky
@@ -197,56 +206,69 @@ export default class DetailsView extends Component {
     return (
       <div data-test-eholdings-details-view={type}>
         <PaneHeader
-          firstMenu={queryParams.searchType ? (
-            <IconButton
-              icon="closeX"
-              ariaLabel={`Close ${paneTitle}`}
-              href={`/eholdings${router.route.location.search}`}
-              data-test-eholdings-details-view-close-button
-            />
-          ) : historyState && historyState.eholdings && (
-            <IconButton
-              icon="left-arrow"
-              ariaLabel="Go back"
-              onClick={() => router.history.goBack()}
-              data-test-eholdings-details-view-back-button
-            />
-          )}
-          paneTitle={(
+          firstMenu={
+            queryParams.searchType ? (
+              <PaneMenu>
+                <div data-test-eholdings-details-view-close-button>
+                  <IconButton
+                    icon="closeX"
+                    ariaLabel={`Close ${paneTitle}`}
+                    href={`/eholdings${router.route.location.search}`}
+                  />
+                </div>
+              </PaneMenu>
+            ) : (
+              historyState &&
+              historyState.eholdings && (
+                <PaneMenu>
+                  <div data-test-eholdings-details-view-back-button>
+                    <IconButton
+                      icon="left-arrow"
+                      ariaLabel="Go back"
+                      onClick={() => router.history.goBack()}
+                    />
+                  </div>
+                </PaneMenu>
+              )
+            )
+          }
+          paneTitle={
             <span data-test-eholdings-details-view-pane-title>{paneTitle}</span>
-          )}
-          paneSub={(
+          }
+          paneSub={
             <span data-test-eholdings-details-view-pane-sub>{paneSub}</span>
-          )}
+          }
           actionMenuItems={actionMenuItems}
           lastMenu={lastMenu}
         />
 
         <div
-          ref={(n) => { this.$container = n; }}
+          ref={n => {
+            this.$container = n;
+          }}
           className={containerClassName}
           onScroll={this.handleScroll}
           onWheel={this.handleWheel}
           data-test-eholdings-detail-pane-contents
         >
-          {model.isLoaded ? [
-            <div key="header" className={styles.header}>
-              <h2
-                tabIndex={-1}
-                ref={this.$heading}
-                data-test-eholdings-details-view-name={type}
-              >
-                {paneTitle}
-              </h2>
-              {paneSub && (
-                <p>{paneSub}</p>
-              )}
-            </div>,
+          {model.isLoaded ? (
+            [
+              <div key="header" className={styles.header}>
+                <h2
+                  tabIndex={-1}
+                  ref={this.$heading}
+                  data-test-eholdings-details-view-name={type}
+                >
+                  {paneTitle}
+                </h2>
+                {paneSub && <p>{paneSub}</p>}
+              </div>,
 
-            <div key="body" className={styles.body}>
-              {bodyContent}
-            </div>
-          ] : model.request.isRejected ? (
+              <div key="body" className={styles.body}>
+                {bodyContent}
+              </div>
+            ]
+          ) : model.request.isRejected ? (
             <p data-test-eholdings-details-view-error={type}>
               {model.request.errors[0].title}
             </p>
@@ -254,31 +276,38 @@ export default class DetailsView extends Component {
             <Icon icon="spinner-ellipsis" />
           )}
 
-          {!!renderList && model.isLoaded && (
-            <div
-              ref={(n) => { this.$sticky = n; }}
-              className={styles.sticky}
-              data-test-eholdings-details-view-list={type}
-            >
-              <div className={styles['list-header']}>
-                <div>
-                  <h3>{capitalize(listType)}</h3>
-
+          {!!renderList &&
+            model.isLoaded && (
+              <Accordion
+                label={listLabel}
+                className={styles['list-header']}
+                displayWhenOpen={searchModal}
+              >
+                <div
+                  ref={n => {
+                    this.$sticky = n;
+                  }}
+                  className={cx(styles.sticky, styles.body)}
+                  data-test-eholdings-details-view-list={type}
+                >
                   {resultsLength > 0 && (
-                    <div data-test-eholdings-details-view-results-count>
-                      <p><small>{resultsLength} records found</small></p>
-                    </div>
+                    <KeyValue label="Records Found">
+                      <div data-test-eholdings-details-view-results-count>
+                        <FormattedNumber value={resultsLength} />
+                      </div>
+                    </KeyValue>
                   )}
+                  <div
+                    ref={n => {
+                      this.$list = n;
+                    }}
+                    className={styles.list}
+                  >
+                    {renderList(isSticky)}
+                  </div>
                 </div>
-
-                {searchModal}
-              </div>
-
-              <div ref={(n) => { this.$list = n; }} className={styles.list}>
-                {renderList(isSticky)}
-              </div>
-            </div>
-          )}
+              </Accordion>
+            )}
         </div>
       </div>
     );

@@ -89,7 +89,6 @@ h4 {
     color: var(--subLabelColor #999);
     font-size: 18px;
     font-weight: 600;
-    padding: 1rem;
     margin: 0;
 
     &:not(:only-child) {
