@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { FormattedNumber } from 'react-intl';
+import AccordionHeader from '@folio/stripes-components/lib/Accordion/headers/DefaultAccordionHeader';
 
 import {
   Accordion,
@@ -15,6 +16,8 @@ import {
 import styles from './details-view.css';
 
 const cx = classNames.bind(styles);
+
+const dud = () => null;
 
 /**
  * This component will render a details view which includes the type
@@ -53,7 +56,7 @@ export default class DetailsView extends Component {
     lastMenu: PropTypes.node,
     resultsLength: PropTypes.number,
     searchModal: PropTypes.node,
-    listLabel: PropTypes.node
+    listType: PropTypes.node
   };
 
   static contextTypes = {
@@ -66,7 +69,8 @@ export default class DetailsView extends Component {
   };
 
   state = {
-    isSticky: false
+    isSticky: false,
+    isListAccordionOpen: true
   };
 
   // used to focus the heading when the model loads
@@ -178,12 +182,18 @@ export default class DetailsView extends Component {
     }
   };
 
+  toggleListAccordion = () => {
+    this.setState({
+      isListAccordionOpen: !this.state.isListAccordionOpen
+    });
+  };
+
   render() {
     let {
       type,
       model,
       bodyContent,
-      listLabel,
+      listType,
       renderList,
       paneTitle,
       paneSub,
@@ -195,13 +205,22 @@ export default class DetailsView extends Component {
 
     let { router, queryParams } = this.context;
 
-    let { isSticky } = this.state;
+    let { isSticky, isListAccordionOpen } = this.state;
 
     let containerClassName = cx('container', {
       locked: isSticky
     });
 
     let historyState = router.history.location.state;
+
+    let accordionHeader = (
+      <AccordionHeader
+        label={listType}
+        open={isListAccordionOpen}
+        onToggle={this.toggleListAccordion}
+        displayWhenOpen={searchModal}
+      />
+    );
 
     return (
       <div data-test-eholdings-details-view={type}>
@@ -279,9 +298,10 @@ export default class DetailsView extends Component {
           {!!renderList &&
             model.isLoaded && (
               <Accordion
-                label={listLabel}
+                header={isListAccordionOpen ? dud : () => accordionHeader}
+                label={listType}
+                open={isListAccordionOpen}
                 className={styles['list-header']}
-                displayWhenOpen={searchModal}
               >
                 <div
                   ref={n => {
@@ -290,6 +310,7 @@ export default class DetailsView extends Component {
                   className={cx(styles.sticky, styles.body)}
                   data-test-eholdings-details-view-list={type}
                 >
+                  {accordionHeader}
                   {resultsLength > 0 && (
                     <KeyValue label="Records Found">
                       <div data-test-eholdings-details-view-results-count>

@@ -63,7 +63,7 @@ export default function ProviderShow({
         )}
         searchModal={searchModal}
         resultsLength={packages.length}
-        listLabel={capitalize(listType)}
+        listType={capitalize(listType)}
         renderList={scrollable => (
           <QueryList
             type="provider-packages"
