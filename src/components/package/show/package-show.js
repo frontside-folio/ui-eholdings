@@ -332,7 +332,7 @@ class PackageShow extends Component {
               </Accordion>
             </div>
           )}
-          listType={capitalize("titles")}
+          listType={capitalize('titles')}
           renderList={scrollable => (
             <QueryList
               type="package-titles"

@@ -214,7 +214,7 @@ export default class DetailsView extends Component {
     let historyState = router.history.location.state;
 
     let accordionHeader = (
-      <AccordionHeader
+      listType && <AccordionHeader
         label={listType}
         open={isListAccordionOpen}
         onToggle={this.toggleListAccordion}
