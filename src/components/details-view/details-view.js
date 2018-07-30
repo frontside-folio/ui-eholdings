@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { FormattedNumber } from 'react-intl';
-import AccordionHeader from '@folio/stripes-components/lib/Accordion/headers/DefaultAccordionHeader';
+import DefaultAccordionHeader from '@folio/stripes-components/lib/Accordion/headers/DefaultAccordionHeader';
 
 import {
   Accordion,
@@ -70,7 +70,8 @@ export default class DetailsView extends Component {
 
   state = {
     isSticky: false,
-    isListAccordionOpen: true
+    isListAccordionOpen: true,
+    listAccordionChanged: false
   };
 
   // used to focus the heading when the model loads
@@ -184,7 +185,8 @@ export default class DetailsView extends Component {
 
   toggleListAccordion = () => {
     this.setState({
-      isListAccordionOpen: !this.state.isListAccordionOpen
+      isListAccordionOpen: !this.state.isListAccordionOpen,
+      listAccordionChanged: true
     });
   };
 
@@ -205,7 +207,7 @@ export default class DetailsView extends Component {
 
     let { router, queryParams } = this.context;
 
-    let { isSticky, isListAccordionOpen } = this.state;
+    let { isSticky, isListAccordionOpen, listAccordionChanged } = this.state;
 
     let containerClassName = cx('container', {
       locked: isSticky
@@ -215,7 +217,7 @@ export default class DetailsView extends Component {
 
     let accordionHeader = listType && (
       <div className={!isListAccordionOpen ? cx(styles.sticky, styles.body) : ''}>
-        <AccordionHeader
+        <DefaultAccordionHeader
           label={listType}
           open={isListAccordionOpen}
           onToggle={this.toggleListAccordion}
@@ -299,27 +301,18 @@ export default class DetailsView extends Component {
 
           {!!renderList &&
             model.isLoaded && (
-              <Accordion
-                header={isListAccordionOpen ? dud : () => accordionHeader}
-                label={listType}
-                open={isListAccordionOpen}
-                className={styles['list-header']}
+              <div
+                ref={n => {
+                  this.$sticky = n;
+                }}
+                className={styles.sticky}
+                data-test-eholdings-details-view-list={type}
               >
-                <div
-                  ref={n => {
-                    this.$sticky = n;
-                  }}
-                  className={cx(styles.sticky, styles.body)}
-                  data-test-eholdings-details-view-list={type}
+                <Accordion
+                  label={listType}
+                  open={isListAccordionOpen}
+                  displayWhenOpen={searchModal}
                 >
-                  {accordionHeader}
-                  {resultsLength > 0 && (
-                    <KeyValue label="Records Found">
-                      <div data-test-eholdings-details-view-results-count>
-                        <FormattedNumber value={resultsLength} />
-                      </div>
-                    </KeyValue>
-                  )}
                   <div
                     ref={n => {
                       this.$list = n;
@@ -328,8 +321,8 @@ export default class DetailsView extends Component {
                   >
                     {renderList(isSticky)}
                   </div>
-                </div>
-              </Accordion>
+                </Accordion>
+              </div>
             )}
         </div>
       </div>
