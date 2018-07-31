@@ -117,23 +117,34 @@ export default class DetailsView extends Component {
     // bail if we shouldn't handle scrolling
     if (!this.shouldHandleScroll) return;
 
+    // console.log('e.target', e.target);
+    // console.log('e.currentTarget', e.currentTarget);
+    // console.log('this.$list.firstElementChild', this.$list.firstElementChild);
+
     // if the list's child element hits the top, disable isSticky
     if (this.$list.firstElementChild === e.target &&
         e.target.scrollTop === 0 && isSticky) {
       // prevent scroll logic around bottoming out by scrolling up 1px
       this.$container.scrollTop = this.$container.scrollTop - 1;
       this.setState({ isSticky: false });
+      console.log('got here');
 
     // don't do these calculations when not scrolling the container
     } else if (e.currentTarget === e.target) {
       let top = e.currentTarget.scrollTop;
       let height = e.currentTarget.offsetHeight;
-      let scrollHeight = e.currentTarget.scrollHeight;
+      let scrollHeight = e.currentTarget.scrollHeight; // this one's way off
       // these will be equal when scrolled all the way down
       let bottomedOut = (top + height) === scrollHeight;
 
+      // console.log('canIgethere', isSticky);
+      // console.log('bottomedOut', bottomedOut);
+      console.log('top + height', top + height);
+      console.log('scrollHeight', scrollHeight);
+
       // if bottoming out, enable isSticky
       if (bottomedOut && !isSticky) {
+        console.log('important');
         this.setState({ isSticky: true });
       // if not bottomed out, disable isSticky
       } else if (!bottomedOut && isSticky) {
@@ -260,23 +271,25 @@ export default class DetailsView extends Component {
               className={styles.sticky}
               data-test-eholdings-details-view-list={type}
             >
-              <div className={styles['list-header']}>
-                <div>
-                  <h3>{capitalize(listType)}</h3>
+              <section>
+                <div className={styles['list-header']}>
+                  <div>
+                    <h3>{capitalize(listType)}</h3>
 
-                  {resultsLength > 0 && (
-                    <div data-test-eholdings-details-view-results-count>
-                      <p><small>{resultsLength} records found</small></p>
-                    </div>
-                  )}
+                    {resultsLength > 0 && (
+                      <div data-test-eholdings-details-view-results-count>
+                        <p><small>{resultsLength} records found</small></p>
+                      </div>
+                    )}
+                  </div>
+
+                  {searchModal}
                 </div>
 
-                {searchModal}
-              </div>
-
-              <div ref={(n) => { this.$list = n; }} className={styles.list}>
-                {renderList(isSticky)}
-              </div>
+                <div ref={(n) => { this.$list = n; }} className={styles.list}>
+                  {renderList(isSticky)}
+                </div>
+              </section>
             </div>
           )}
         </div>
