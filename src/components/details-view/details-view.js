@@ -5,11 +5,13 @@ import capitalize from 'lodash/capitalize';
 import { ExpandAllButton } from '@folio/stripes-components/lib/Accordion';
 
 import {
+  Accordion,
   Icon,
   IconButton,
   PaneHeader
 } from '@folio/stripes-components';
 
+import AccordionListHeader from './accordion-list-header';
 import styles from './details-view.css';
 
 const cx = classNames.bind(styles);
@@ -274,23 +276,15 @@ export default class DetailsView extends Component {
               className={styles.sticky}
               data-test-eholdings-details-view-list={type}
             >
-              <div className={styles['list-header']}>
-                <div>
-                  <h3>{capitalize(listType)}</h3>
-
-                  {resultsLength > 0 && (
-                    <div data-test-eholdings-details-view-results-count>
-                      <p><small>{resultsLength} records found</small></p>
-                    </div>
-                  )}
-                </div>
-
-                {searchModal}
-              </div>
-
-              <div ref={(n) => { this.$list = n; }} className={styles.list}>
+              <Accordion
+                header={AccordionListHeader}
+                label={capitalize(listType)}
+                displayWhenOpen={searchModal}
+                resultsLength={resultsLength}
+                contentRef={(n) => { this.$list = n; }}
+              >
                 {renderList(isSticky)}
-              </div>
+              </Accordion>
             </div>
           )}
         </div>
