@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
 import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
+import { FormattedXmlMessage } from 'react-intl-formatted-xml-message';
 
 import {
   Button,
+  Icon,
   IconButton,
   Select,
   TextField
@@ -98,7 +100,7 @@ class CustomEmbargoFields extends Component {
             type="button"
             onClick={this.toggleInputs}
           >
-            <FormattedMessage id="ui-eholdings.resource.embargoPeriod.addCustom" />
+            <FormattedXmlMessage id="ui-eholdings.resource.embargoPeriod.addCustom" tags={{ 'icon': <Icon /> }} />
           </Button>
         </div>
       </div>

@@ -3,9 +3,11 @@ import { Field, FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { injectIntl, intlShape } from 'react-intl';
+import { FormattedXmlMessage } from 'react-intl-formatted-xml-message';
 
 import {
   Datepicker,
+  Icon,
   RepeatableField
 } from '@folio/stripes/components';
 
@@ -60,7 +62,7 @@ class PackageCoverageFields extends Component {
     return (
       <div data-test-eholdings-package-coverage-fields>
         <FieldArray
-          addLabel={intl.formatMessage({ id: 'ui-eholdings.package.coverage.addDateRange' })}
+          addLabel={(<FormattedXmlMessage id="ui-eholdings.package.coverage.addDateRange" tags={{ 'icon': <Icon /> }} />)}
           component={RepeatableField}
           emptyMessage={
             initialValue.length > 0 && initialValue[0].beginCoverage ?

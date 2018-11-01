@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Field, FieldArray } from 'redux-form';
+import { FormattedXmlMessage } from 'react-intl-formatted-xml-message';
 import {
+  Icon,
   RepeatableField,
   Select,
   TextField
@@ -63,7 +65,7 @@ class ContributorField extends Component {
     return (
       <div data-test-eholdings-contributor-field>
         <FieldArray
-          addLabel={intl.formatMessage({ id: 'ui-eholdings.title.contributor.addContributor' })}
+          addLabel={(<FormattedXmlMessage id="ui-eholdings.title.contributor.addContributor" tags={{ 'icon': <Icon /> }} />)}
           component={RepeatableField}
           emptyMessage={
             initialValue.length > 0 && initialValue[0].contributor ?

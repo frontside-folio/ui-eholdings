@@ -1,14 +1,16 @@
 import React, { Component, Fragment } from 'react';
-import { Field, FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
+import { Field, FieldArray } from 'redux-form';
+import { injectIntl, intlShape } from 'react-intl';
+import { FormattedXmlMessage } from 'react-intl-formatted-xml-message';
 
 import {
+  Icon,
   RepeatableField,
   Select,
   TextField
 } from '@folio/stripes/components';
 
-import { injectIntl, intlShape } from 'react-intl';
 import styles from './identifiers-fields.css';
 
 class IdentifiersFields extends Component {
@@ -65,7 +67,7 @@ class IdentifiersFields extends Component {
     return (
       <div data-test-eholdings-identifiers-fields>
         <FieldArray
-          addLabel={intl.formatMessage({ id: 'ui-eholdings.title.identifier.addIdentifier' })}
+          addLabel={(<FormattedXmlMessage id="ui-eholdings.title.contributor.addIdentifier" tags={{ 'icon': <Icon /> }} />)}
           component={RepeatableField}
           emptyMessage={
             initialValue.length > 0 && initialValue[0].id ?

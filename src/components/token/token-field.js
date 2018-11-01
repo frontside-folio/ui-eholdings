@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
+import { FormattedXmlMessage } from 'react-intl-formatted-xml-message';
 
 import {
   Button,
+  Icon,
   TextArea
 } from '@folio/stripes/components';
 import styles from './token-field.css';
@@ -56,7 +58,11 @@ class TokenField extends Component {
           type="button"
           onClick={this.toggleInputs}
         >
-          {type === 'provider' ? (<FormattedMessage id="ui-eholdings.provider.token.addToken" />) : (<FormattedMessage id="ui-eholdings.package.token.addToken" />)}
+          {type === 'provider' ? (
+            <FormattedXmlMessage id="ui-eholdings.provider.token.addToken" tags={{ 'icon': <Icon /> }} />
+          ) : (
+            <FormattedXmlMessage id="ui-eholdings.package.token.addToken" tags={{ 'icon': <Icon /> }} />
+          )}
         </Button>
       </div>
     );

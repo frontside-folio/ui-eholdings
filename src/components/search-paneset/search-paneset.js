@@ -2,11 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
+  Icon,
   PaneHeader,
   PaneMenu
 } from '@folio/stripes/components';
 import capitalize from 'lodash/capitalize';
 import { FormattedMessage } from 'react-intl';
+import { FormattedXmlMessage } from 'react-intl-formatted-xml-message';
 
 import SearchPane from '../search-pane';
 import ResultsPane from '../results-pane';
@@ -67,7 +69,10 @@ class SearchPaneset extends React.Component {
           state: { eholdings: true }
         }}
       >
-        <FormattedMessage id="ui-eholdings.search.addNew" />
+        <FormattedXmlMessage
+          id="ui-eholdings.search.addNew"
+          tags={{ 'icon': <Icon /> }}
+        />
       </Button>
     );
   };
