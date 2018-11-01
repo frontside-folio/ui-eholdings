@@ -17,16 +17,16 @@ function validate(value) {
 
 export default function PackageNameField() {
   return (
-    <Field name="name" validate={validate}>
-      {({ input, meta }) => (
-        <div data-test-eholdings-package-name-field>
+    <div data-test-eholdings-package-name-field>
+      <Field name="name" validate={validate}>
+        {({ input, meta }) => (
           <TextField
-            label={(<FormattedMessage id="ui-eholdings.label.name.isRequired" />)}
-            error={meta.error && meta.touched && <span>{meta.error}</span>}
+            label={<FormattedMessage id="ui-eholdings.label.name.isRequired" />}
+            error={meta.error && meta.touched ? meta.error : undefined}
             {...input}
           />
-        </div>
-      )}
-    </Field>
+        )}
+      </Field>
+    </div>
   );
 }

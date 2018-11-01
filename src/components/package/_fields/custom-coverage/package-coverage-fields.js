@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { Field } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
 import moment from 'moment';
@@ -14,12 +13,7 @@ import styles from './package-coverage-fields.css';
 
 class PackageCoverageFields extends Component {
   static propTypes = {
-    initialValue: PropTypes.array,
     intl: intlShape.isRequired
-  };
-
-  static defaultProps = {
-    initialValue: []
   };
 
   validate = (values) => {
@@ -50,8 +44,6 @@ class PackageCoverageFields extends Component {
   }
 
   renderField = (dateRange) => {
-    const { intl: { formatMessage } } = this.props;
-
     return (
       <Fragment>
         <div
@@ -64,7 +56,7 @@ class PackageCoverageFields extends Component {
           >
             {({ input, meta }) => (
               <Datepicker
-                label={formatMessage({ id: 'ui-eholdings.date.startDate' })}
+                label={<FormattedMessage id="ui-eholdings.date.startDate" />}
                 input={input} // will need to be refactored when Datepicker is independent of Redux Form
                 meta={meta} // will need to be refactored when Datepicker is independent of Redux Form
               />
@@ -81,7 +73,7 @@ class PackageCoverageFields extends Component {
           >
             {({ input, meta }) => (
               <Datepicker
-                label={formatMessage({ id: 'ui-eholdings.date.endDate' })}
+                label={<FormattedMessage id="ui-eholdings.date.endDate" />}
                 input={input} // will need to be refactored when Datepicker is independent of Redux Form
                 meta={meta} // will need to be refactored when Datepicker is independent of Redux Form
               />
@@ -93,16 +85,14 @@ class PackageCoverageFields extends Component {
   }
 
   render() {
-    const { initialValue } = this.props;
-
     return (
       <div data-test-eholdings-package-coverage-fields>
         <FieldArray name="customCoverages" validate={this.validate}>
-          {({ fields }) => (
+          {({ fields, meta }) => (
             <RepeatableField
               addLabel={<FormattedMessage id="ui-eholdings.package.coverage.addDateRange" />}
               emptyMessage={
-                initialValue.length > 0 && initialValue[0].beginCoverage ?
+                meta.initial.length > 0 && meta.initial[0].beginCoverage ?
                   <FormattedMessage id="ui-eholdings.package.noCoverageDates" /> : ''
               }
               fields={fields}
