@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { reduxForm } from 'redux-form';
+import { Form, Field } from 'react-final-form';
+import arrayMutators from 'final-form-arrays';
+import { FieldArray } from 'react-final-form-arrays';
 import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
 
 import {
@@ -20,22 +22,22 @@ import styles from './package-create.css';
 
 class PackageCreate extends Component {
   static propTypes = {
-    handleSubmit: PropTypes.func.isRequired,
     intl: intlShape.isRequired,
     onCancel: PropTypes.func,
     onSubmit: PropTypes.func.isRequired,
-    pristine: PropTypes.bool.isRequired,
     request: PropTypes.object.isRequired
   };
+
+  validate = (values) => {
+    return Object.assign({}, validatePackageName(values, this.props), validateCoverageDates(values, this.props));
+  }
 
   render() {
     let {
       intl,
       request,
-      handleSubmit,
       onSubmit,
-      onCancel,
-      pristine
+      onCancel
     } = this.props;
 
     let actionMenuItems = [];
@@ -59,72 +61,80 @@ class PackageCreate extends Component {
             type: 'error'
           }))}
         />
+        <Form
+          onSubmit={onSubmit}
+          validate={this.validate}
+          mutators={{ ...arrayMutators }}
+          render={({ handleSubmit, pristine }) => (
+            <Fragment>
+              <form onSubmit={handleSubmit}>
+                <PaneHeader
+                  paneTitle={<FormattedMessage id="ui-eholdings.package.create.custom" />}
+                  actionMenuItems={actionMenuItems}
+                  firstMenu={onCancel && (
+                    <IconButton
+                      icon="left-arrow"
+                      ariaLabel={intl.formatMessage({ id: 'ui-eholdings.label.icon.goBack' })}
+                      onClick={onCancel}
+                      data-test-eholdings-details-view-back-button
+                    />
+                  )}
+                  lastMenu={(
+                    <Fragment>
+                      {request.isPending && (
+                        <Icon icon="spinner-ellipsis" />
+                      )}
+                      <PaneHeaderButton
+                        disabled={pristine || request.isPending}
+                        type="submit"
+                        buttonStyle="primary"
+                        data-test-eholdings-package-create-save-button
+                      >
+                        {request.isPending ?
+                          (<FormattedMessage id="ui-eholdings.saving" />)
+                          : (<FormattedMessage id="ui-eholdings.save" />)
+                        }
+                      </PaneHeaderButton>
+                    </Fragment>
+                  )}
+                />
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <PaneHeader
-            paneTitle={<FormattedMessage id="ui-eholdings.package.create.custom" />}
-            actionMenuItems={actionMenuItems}
-            firstMenu={onCancel && (
-              <IconButton
-                icon="left-arrow"
-                ariaLabel={intl.formatMessage({ id: 'ui-eholdings.label.icon.goBack' })}
-                onClick={onCancel}
-                data-test-eholdings-details-view-back-button
+                <div className={styles['package-create-form-container']}>
+                  <DetailsViewSection
+                    label={<FormattedMessage id="ui-eholdings.package.packageInformation" />}
+                    separator={false}
+                  >
+                    <Field
+                      component={NameField}
+                      name="name"
+                    />
+                    <Field
+                      component={ContentTypeField}
+                      name="contentType"
+                    />
+                  </DetailsViewSection>
+                  <DetailsViewSection
+                    label={<FormattedMessage id="ui-eholdings.label.coverageSettings" />}
+                  >
+                    <FieldArray
+                      component={CoverageFields}
+                      name="customCoverages"
+                    />
+                  </DetailsViewSection>
+                </div>
+              </form>
+              <NavigationModal
+                modalLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.modalLabel' })}
+                continueLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.continueLabel' })}
+                dismissLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.dismissLabel' })}
+                when={!pristine && !request.isResolved}
               />
-            )}
-            lastMenu={(
-              <Fragment>
-                {request.isPending && (
-                  <Icon icon="spinner-ellipsis" />
-                )}
-                <PaneHeaderButton
-                  disabled={pristine || request.isPending}
-                  type="submit"
-                  buttonStyle="primary"
-                  data-test-eholdings-package-create-save-button
-                >
-                  {request.isPending ?
-                    (<FormattedMessage id="ui-eholdings.saving" />)
-                    : (<FormattedMessage id="ui-eholdings.save" />)
-                  }
-                </PaneHeaderButton>
-              </Fragment>
-            )}
-          />
-
-          <div className={styles['package-create-form-container']}>
-            <DetailsViewSection
-              label={<FormattedMessage id="ui-eholdings.package.packageInformation" />}
-              separator={false}
-            >
-              <NameField />
-              <ContentTypeField />
-            </DetailsViewSection>
-            <DetailsViewSection
-              label={<FormattedMessage id="ui-eholdings.label.coverageSettings" />}
-            >
-              <CoverageFields />
-            </DetailsViewSection>
-          </div>
-        </form>
-        <NavigationModal
-          modalLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.modalLabel' })}
-          continueLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.continueLabel' })}
-          dismissLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.dismissLabel' })}
-          when={!pristine && !request.isResolved}
+            </Fragment>
+          )}
         />
       </div>
     );
   }
 }
 
-const validate = (values, props) => {
-  return Object.assign({}, validatePackageName(values, props), validateCoverageDates(values, props));
-};
-
-export default injectIntl(reduxForm({
-  validate,
-  enableReinitialize: true,
-  form: 'PackageCreate',
-  destroyOnUnmount: false
-})(PackageCreate));
+export default injectIntl(PackageCreate);

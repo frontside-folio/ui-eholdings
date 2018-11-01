@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { Field, FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
+import { Field } from 'react-final-form';
 import moment from 'moment';
 import { injectIntl, intlShape } from 'react-intl';
 
@@ -13,6 +13,7 @@ import styles from './package-coverage-fields.css';
 
 class PackageCoverageFields extends Component {
   static propTypes = {
+    fields: PropTypes.object.isRequired,
     initialValue: PropTypes.array,
     intl: intlShape.isRequired
   };
@@ -55,18 +56,19 @@ class PackageCoverageFields extends Component {
   }
 
   render() {
-    const { initialValue, intl } = this.props;
+    const { fields, initialValue, intl } = this.props;
 
     return (
       <div data-test-eholdings-package-coverage-fields>
-        <FieldArray
+        <RepeatableField
           addLabel={intl.formatMessage({ id: 'ui-eholdings.package.coverage.addDateRange' })}
-          component={RepeatableField}
           emptyMessage={
             initialValue.length > 0 && initialValue[0].beginCoverage ?
               intl.formatMessage({ id: 'ui-eholdings.package.noCoverageDates' }) : ''
           }
-          name="customCoverages"
+          fields={fields}
+          onAdd={() => fields.push({})}
+          onRemove={(index) => fields.remove(index)}
           renderField={this.renderField}
         />
       </div>

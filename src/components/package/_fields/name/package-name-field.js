@@ -1,18 +1,11 @@
 import React from 'react';
-import { Field } from 'redux-form';
 import { injectIntl, intlShape } from 'react-intl';
-
 import { TextField } from '@folio/stripes/components';
 
-function PackageNameField({ intl }) {
+function PackageNameField({ input, intl }) {
   return (
     <div data-test-eholdings-package-name-field>
-      <Field
-        name="name"
-        type="text"
-        component={TextField}
-        label={intl.formatMessage({ id: 'ui-eholdings.label.name.isRequired' })}
-      />
+      <TextField label={intl.formatMessage({ id: 'ui-eholdings.label.name.isRequired' })} {...input} />
     </div>
   );
 }
