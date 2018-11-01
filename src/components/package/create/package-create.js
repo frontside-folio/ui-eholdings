@@ -13,7 +13,8 @@ import {
 
 import DetailsViewSection from '../../details-view-section';
 import NameField, { validate as validatePackageName } from '../_fields/name';
-import CoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
+// import CoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
+import { validate as validateCoverageDates } from '../_fields/custom-coverage';
 import ContentTypeField from '../_fields/content-type';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
@@ -65,6 +66,11 @@ class PackageCreate extends Component {
           onSubmit={onSubmit}
           validate={this.validate}
           mutators={{ ...arrayMutators }}
+          initialValues={{
+            name: '',
+            contentType: 'Unknown',
+            customCoverages: []
+          }}
           render={({ handleSubmit, pristine }) => (
             <Fragment>
               <form onSubmit={handleSubmit}>
@@ -111,14 +117,6 @@ class PackageCreate extends Component {
                     <Field
                       component={ContentTypeField}
                       name="contentType"
-                    />
-                  </DetailsViewSection>
-                  <DetailsViewSection
-                    label={<FormattedMessage id="ui-eholdings.label.coverageSettings" />}
-                  >
-                    <FieldArray
-                      component={CoverageFields}
-                      name="customCoverages"
                     />
                   </DetailsViewSection>
                 </div>
