@@ -1,8 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Field } from 'react-final-form';
+import { Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
-import { FieldArray } from 'react-final-form-arrays';
 import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
 
 import {
@@ -12,9 +11,8 @@ import {
 } from '@folio/stripes/components';
 
 import DetailsViewSection from '../../details-view-section';
-import NameField, { validate as validatePackageName } from '../_fields/name';
-// import CoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
-import { validate as validateCoverageDates } from '../_fields/custom-coverage';
+import NameField from '../_fields/name';
+import CoverageFields from '../_fields/custom-coverage';
 import ContentTypeField from '../_fields/content-type';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
@@ -28,10 +26,6 @@ class PackageCreate extends Component {
     onSubmit: PropTypes.func.isRequired,
     request: PropTypes.object.isRequired
   };
-
-  validate = (values) => {
-    return Object.assign({}, validatePackageName(values, this.props), validateCoverageDates(values, this.props));
-  }
 
   render() {
     let {
@@ -64,7 +58,6 @@ class PackageCreate extends Component {
         />
         <Form
           onSubmit={onSubmit}
-          validate={this.validate}
           mutators={{ ...arrayMutators }}
           initialValues={{
             name: '',
@@ -110,14 +103,13 @@ class PackageCreate extends Component {
                     label={<FormattedMessage id="ui-eholdings.package.packageInformation" />}
                     separator={false}
                   >
-                    <Field
-                      component={NameField}
-                      name="name"
-                    />
-                    <Field
-                      component={ContentTypeField}
-                      name="contentType"
-                    />
+                    <NameField />
+                    <ContentTypeField />
+                  </DetailsViewSection>
+                  <DetailsViewSection
+                    label={<FormattedMessage id="ui-eholdings.label.coverageSettings" />}
+                  >
+                    <CoverageFields />
                   </DetailsViewSection>
                 </div>
               </form>

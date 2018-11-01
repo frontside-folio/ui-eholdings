@@ -1,31 +1,32 @@
 import React from 'react';
-import { injectIntl, intlShape } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
+import { Field } from 'react-final-form';
 import { TextField } from '@folio/stripes/components';
 
-function PackageNameField({ input, intl }) {
-  return (
-    <div data-test-eholdings-package-name-field>
-      <TextField label={intl.formatMessage({ id: 'ui-eholdings.label.name.isRequired' })} {...input} />
-    </div>
-  );
+function validate(value) {
+  if (value === '') {
+    return <FormattedMessage id="ui-eholdings.validate.errors.customPackage.name" />;
+  }
+
+  if (value.length >= 300) {
+    return <FormattedMessage id="ui-eholdings.validate.errors.customPackage.name.length" />;
+  }
+
+  return null;
 }
 
-PackageNameField.propTypes = {
-  intl: intlShape.isRequired
-};
-
-export default injectIntl(PackageNameField);
-
-export function validate(values, props) {
-  let errors = {};
-
-  if (values.name === '') {
-    errors.name = props.intl.formatMessage({ id: 'ui-eholdings.validate.errors.customPackage.name' });
-  }
-
-  if (values.name.length >= 300) {
-    errors.name = props.intl.formatMessage({ id: 'ui-eholdings.validate.errors.customPackage.name.length' });
-  }
-
-  return errors;
+export default function PackageNameField() {
+  return (
+    <Field name="name" validate={validate}>
+      {({ input, meta }) => (
+        <div data-test-eholdings-package-name-field>
+          <TextField
+            label={(<FormattedMessage id="ui-eholdings.label.name.isRequired" />)}
+            error={meta.error && meta.touched && <span>{meta.error}</span>}
+            {...input}
+          />
+        </div>
+      )}
+    </Field>
+  );
 }
