@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { reduxForm, Field } from 'redux-form';
+import { Field } from 'react-final-form';
 import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
 
 import {
@@ -151,6 +151,10 @@ class ManagedPackageEdit extends Component {
         <FormattedMessage id={translationKey} />
       </Headline>
     );
+  }
+
+  validate = (values) => {
+    return Object.assign({}, validateCoverageDates(values, this.props), validateToken(values, this.props));
   }
 
   render() {
@@ -405,13 +409,4 @@ class ManagedPackageEdit extends Component {
   }
 }
 
-const validate = (values, props) => {
-  return Object.assign({}, validateCoverageDates(values, props), validateToken(values, props));
-};
-
-export default injectIntl(reduxForm({
-  validate,
-  enableReinitialize: true,
-  form: 'ManagedPackageEdit',
-  destroyOnUnmount: false,
-})(ManagedPackageEdit));
+export default injectIntl(ManagedPackageEdit);

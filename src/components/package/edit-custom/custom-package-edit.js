@@ -145,6 +145,10 @@ class CustomPackageEdit extends Component {
     );
   }
 
+  validate = (values) => {
+    return Object.assign({}, validatePackageName(values, this.props), validateCoverageDates(values, this.props));
+  }
+
   render() {
     let {
       initialValues,
@@ -385,13 +389,4 @@ class CustomPackageEdit extends Component {
   }
 }
 
-const validate = (values, props) => {
-  return Object.assign({}, validatePackageName(values, props), validateCoverageDates(values, props));
-};
-
-export default injectIntl(reduxForm({
-  validate,
-  form: 'CustomPackageEdit',
-  enableReinitialize: true,
-  destroyOnUnmount: false,
-})(CustomPackageEdit));
+export default injectIntl(CustomPackageEdit);
