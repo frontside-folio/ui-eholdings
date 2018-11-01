@@ -19,14 +19,14 @@ import {
 import { processErrors } from '../../utilities';
 
 import DetailsView from '../../details-view';
-import NameField, { validate as validatePackageName } from '../_fields/name';
-import CoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
+import NameField from '../_fields/name';
+import CoverageFields from '../_fields/custom-coverage';
 import ContentTypeField from '../_fields/content-type';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
 import PaneHeaderButton from '../../pane-header-button';
 import SelectionStatus from '../selection-status';
-import ProxySelectField from '../../proxy-select';
+import ProxySelectField from '../_fields/proxy-select';
 import styles from './custom-package-edit.css';
 
 class CustomPackageEdit extends Component {
@@ -145,10 +145,6 @@ class CustomPackageEdit extends Component {
     );
   }
 
-  validate = (values) => {
-    return Object.assign({}, validatePackageName(values, this.props), validateCoverageDates(values, this.props));
-  }
-
   render() {
     let {
       initialValues,
@@ -199,8 +195,8 @@ class CustomPackageEdit extends Component {
         <Toaster toasts={processErrors(model)} position="bottom" />
         <Form
           onSubmit={onSubmit}
-          validate={this.validate}
           mutators={{ ...arrayMutators }}
+          initialValues={initialValues}
           render={({ handleSubmit, pristine }) => (
             <form onSubmit={handleSubmit}>
               <DetailsView

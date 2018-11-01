@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Field } from 'react-final-form';
+import { Field, Form } from 'react-final-form';
+import arrayMutators from 'final-form-arrays';
 import { intlShape, injectIntl, FormattedMessage } from 'react-intl';
 
 import {
@@ -16,12 +17,12 @@ import {
 import { processErrors } from '../../utilities';
 
 import DetailsView from '../../details-view';
-import CoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
+import CoverageFields from '../_fields/custom-coverage';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
 import PaneHeaderButton from '../../pane-header-button';
 import SelectionStatus from '../selection-status';
-import ProxySelectField from '../../proxy-select';
+import ProxySelectField from '../_fields/proxy-select';
 import TokenField, { validate as validateToken } from '../../token';
 import styles from './managed-package-edit.css';
 
@@ -33,13 +34,11 @@ class ManagedPackageEdit extends Component {
       PropTypes.string,
       PropTypes.object
     ]),
-    handleSubmit: PropTypes.func,
     initialValues: PropTypes.object.isRequired,
     intl: intlShape.isRequired,
     model: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    pristine: PropTypes.bool,
     provider: PropTypes.object.isRequired,
     proxyTypes: PropTypes.object.isRequired
   };
@@ -154,15 +153,13 @@ class ManagedPackageEdit extends Component {
   }
 
   validate = (values) => {
-    return Object.assign({}, validateCoverageDates(values, this.props), validateToken(values, this.props));
+    return validateToken(values, this.props);
   }
 
   render() {
     let {
       model,
       initialValues,
-      handleSubmit,
-      pristine,
       proxyTypes,
       provider,
       intl,
@@ -221,164 +218,172 @@ class ManagedPackageEdit extends Component {
     return (
       <div>
         <Toaster toasts={processErrors(model)} position="bottom" />
-        <form onSubmit={handleSubmit(this.handleOnSubmit)}>
-          <DetailsView
-            type="package"
-            model={model}
-            paneTitle={model.name}
-            actionMenuItems={actionMenuItems}
-            handleExpandAll={this.toggleAllSections}
-            sections={sections}
-            lastMenu={(
-              <Fragment>
-                {model.update.isPending && (
-                  <Icon icon="spinner-ellipsis" />
+        <Form
+          onSubmit={this.handleOnSubmit}
+          validate={this.validate}
+          mutators={{ ...arrayMutators }}
+          initialValues={initialValues}
+          render={({ handleSubmit, pristine }) => (
+            <form onSubmit={handleSubmit}>
+              <DetailsView
+                type="package"
+                model={model}
+                paneTitle={model.name}
+                actionMenuItems={actionMenuItems}
+                handleExpandAll={this.toggleAllSections}
+                sections={sections}
+                lastMenu={(
+                  <Fragment>
+                    {model.update.isPending && (
+                      <Icon icon="spinner-ellipsis" />
+                    )}
+                    {model.isSelected && (
+                      <PaneHeaderButton
+                        disabled={pristine || model.update.isPending}
+                        type="submit"
+                        buttonStyle="primary"
+                        data-test-eholdings-package-save-button
+                      >
+                        {model.update.isPending ?
+                          (<FormattedMessage id="ui-eholdings.saving" />)
+                          :
+                          (<FormattedMessage id="ui-eholdings.save" />)}
+                      </PaneHeaderButton>
+                    )}
+                  </Fragment>
                 )}
-                {model.isSelected && (
-                  <PaneHeaderButton
-                    disabled={pristine || model.update.isPending}
-                    type="submit"
-                    buttonStyle="primary"
-                    data-test-eholdings-package-save-button
-                  >
-                    {model.update.isPending ?
-                      (<FormattedMessage id="ui-eholdings.saving" />)
-                      :
-                      (<FormattedMessage id="ui-eholdings.save" />)}
-                  </PaneHeaderButton>
-                )}
-              </Fragment>
-            )}
-            bodyContent={(
-              <Fragment>
-                <Accordion
-                  label={this.getSectionHeader('ui-eholdings.label.holdingStatus')}
-                  open={sections.packageHoldingStatus}
-                  id="packageHoldingStatus"
-                  onToggle={this.toggleSection}
-                >
-                  <SelectionStatus
-                    model={model}
-                    onAddToHoldings={this.props.addPackageToHoldings}
-                  />
-                </Accordion>
-
-                {packageSelected && (
-                  <div>
+                bodyContent={(
+                  <Fragment>
                     <Accordion
-                      label={this.getSectionHeader('ui-eholdings.package.packageSettings')}
-                      open={sections.packageSettings}
-                      id="packageSettings"
+                      label={this.getSectionHeader('ui-eholdings.label.holdingStatus')}
+                      open={sections.packageHoldingStatus}
+                      id="packageHoldingStatus"
                       onToggle={this.toggleSection}
                     >
-                      <div className={styles['visibility-radios']}>
-                        {this.props.initialValues.isVisible != null ? (
-                          <Fragment>
-                            <div data-test-eholdings-package-visibility-field>
-                              <Field
-                                label={intl.formatMessage({ id: 'ui-eholdings.package.visibility' })}
-                                name="isVisible"
-                                component={RadioButtonGroup}
+                      <SelectionStatus
+                        model={model}
+                        onAddToHoldings={this.props.addPackageToHoldings}
+                      />
+                    </Accordion>
+
+                    {packageSelected && (
+                      <div>
+                        <Accordion
+                          label={this.getSectionHeader('ui-eholdings.package.packageSettings')}
+                          open={sections.packageSettings}
+                          id="packageSettings"
+                          onToggle={this.toggleSection}
+                        >
+                          <div className={styles['visibility-radios']}>
+                            {this.props.initialValues.isVisible != null ? (
+                              <Fragment>
+                                <div data-test-eholdings-package-visibility-field>
+                                  <Field
+                                    label={intl.formatMessage({ id: 'ui-eholdings.package.visibility' })}
+                                    name="isVisible"
+                                    component={RadioButtonGroup}
+                                  >
+                                    <RadioButton label={intl.formatMessage({ id: 'ui-eholdings.yes' })} value="true" />
+                                    <RadioButton
+                                      label={intl.formatMessage(
+                                        { id: 'ui-eholdings.package.visibility.no' },
+                                        { visibilityMessage }
+                                      )}
+                                      value="false"
+                                    />
+                                  </Field>
+                                </div>
+                              </Fragment>
+                            ) : (
+                              <div
+                                data-test-eholdings-package-details-visibility
+                                htmlFor="managed-package-details-visibility-switch"
                               >
-                                <RadioButton label={intl.formatMessage({ id: 'ui-eholdings.yes' })} value="true" />
-                                <RadioButton
-                                  label={intl.formatMessage(
-                                    { id: 'ui-eholdings.package.visibility.no' },
-                                    { visibilityMessage }
-                                  )}
-                                  value="false"
-                                />
-                              </Field>
+                                <Icon icon="spinner-ellipsis" />
+                              </div>
+                            )}
+                          </div>
+                          <div className={styles['title-management-radios']}>
+                            {this.props.initialValues.allowKbToAddTitles != null ? (
+                              <Fragment>
+                                <Field
+                                  label={intl.formatMessage({ id: 'ui-eholdings.package.packageAllowToAddTitles' })}
+                                  name="allowKbToAddTitles"
+                                  data-test-eholdings-allow-kb-to-add-titles-radios
+                                  component={RadioButtonGroup}
+                                >
+                                  <RadioButton
+                                    label={intl.formatMessage({ id: 'ui-eholdings.yes' })}
+                                    value="true"
+                                    data-test-eholdings-allow-kb-to-add-titles-radio-yes
+                                  />
+                                  <RadioButton
+                                    label={intl.formatMessage({ id: 'ui-eholdings.no' })}
+                                    value="false"
+                                    data-test-eholdings-allow-kb-to-add-titles-radio-no
+                                  />
+                                </Field>
+                              </Fragment>
+                            ) : (
+                              <div
+                                data-test-eholdings-package-details-allow-add-new-titles
+                                htmlFor="managed-package-details-toggle-allow-add-new-titles-switch"
+                              >
+                                <Icon icon="spinner-ellipsis" />
+                              </div>
+                            )}
+                          </div>
+                          {(proxyTypes.request.isResolved && provider.data.isLoaded) ? (
+                            <div data-test-eholdings-package-proxy-select-field>
+                              <ProxySelectField
+                                proxyTypes={proxyTypes}
+                                inheritedProxyId={provider.proxy.id}
+                              />
                             </div>
-                          </Fragment>
-                        ) : (
-                          <div
-                            data-test-eholdings-package-details-visibility
-                            htmlFor="managed-package-details-visibility-switch"
-                          >
+                          ) : (
                             <Icon icon="spinner-ellipsis" />
-                          </div>
-                        )}
-                      </div>
-                      <div className={styles['title-management-radios']}>
-                        {this.props.initialValues.allowKbToAddTitles != null ? (
-                          <Fragment>
-                            <Field
-                              label={intl.formatMessage({ id: 'ui-eholdings.package.packageAllowToAddTitles' })}
-                              name="allowKbToAddTitles"
-                              data-test-eholdings-allow-kb-to-add-titles-radios
-                              component={RadioButtonGroup}
-                            >
-                              <RadioButton
-                                label={intl.formatMessage({ id: 'ui-eholdings.yes' })}
-                                value="true"
-                                data-test-eholdings-allow-kb-to-add-titles-radio-yes
-                              />
-                              <RadioButton
-                                label={intl.formatMessage({ id: 'ui-eholdings.no' })}
-                                value="false"
-                                data-test-eholdings-allow-kb-to-add-titles-radio-no
-                              />
-                            </Field>
-                          </Fragment>
-                        ) : (
-                          <div
-                            data-test-eholdings-package-details-allow-add-new-titles
-                            htmlFor="managed-package-details-toggle-allow-add-new-titles-switch"
-                          >
-                            <Icon icon="spinner-ellipsis" />
-                          </div>
-                        )}
-                      </div>
-                      {(proxyTypes.request.isResolved && provider.data.isLoaded) ? (
-                        <div data-test-eholdings-package-proxy-select-field>
-                          <ProxySelectField
-                            proxyTypes={proxyTypes}
-                            inheritedProxyId={provider.proxy.id}
-                          />
-                        </div>
-                      ) : (
-                        <Icon icon="spinner-ellipsis" />
-                      )}
-                      {supportsProviderTokens && (
-                      <fieldset>
-                        <Headline tag="legend">
-                          <FormattedMessage id="ui-eholdings.provider.token" />
-                        </Headline>
-                        <TokenField token={provider.providerToken} tokenValue={hasProviderTokenValue} type="provider" />
-                      </fieldset>
-                      )}
-                      {supportsPackageTokens && (
-                      <fieldset>
-                        <Headline tag="legend">
-                          <FormattedMessage id="ui-eholdings.package.token" />
-                        </Headline>
-                        <TokenField token={model.packageToken} tokenValue={hasPackageTokenValue} type="package" />
-                      </fieldset>
-                      )}
-                    </Accordion>
+                          )}
+                          {supportsProviderTokens && (
+                          <fieldset>
+                            <Headline tag="legend">
+                              <FormattedMessage id="ui-eholdings.provider.token" />
+                            </Headline>
+                            <TokenField token={provider.providerToken} tokenValue={hasProviderTokenValue} type="provider" />
+                          </fieldset>
+                          )}
+                          {supportsPackageTokens && (
+                          <fieldset>
+                            <Headline tag="legend">
+                              <FormattedMessage id="ui-eholdings.package.token" />
+                            </Headline>
+                            <TokenField token={model.packageToken} tokenValue={hasPackageTokenValue} type="package" />
+                          </fieldset>
+                          )}
+                        </Accordion>
 
-                    <Accordion
-                      label={this.getSectionHeader('ui-eholdings.package.coverageSettings')}
-                      open={sections.packageCoverageSettings}
-                      id="packageCoverageSettings"
-                      onToggle={this.toggleSection}
-                    >
-                      <CoverageFields initialValue={initialValues.customCoverages} />
-                    </Accordion>
-                  </div>
+                        <Accordion
+                          label={this.getSectionHeader('ui-eholdings.package.coverageSettings')}
+                          open={sections.packageCoverageSettings}
+                          id="packageCoverageSettings"
+                          onToggle={this.toggleSection}
+                        >
+                          <CoverageFields initialValue={initialValues.customCoverages} />
+                        </Accordion>
+                      </div>
+                    )}
+
+                    <NavigationModal
+                      modalLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.modalLabel' })}
+                      continueLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.continueLabel' })}
+                      dismissLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.dismissLabel' })}
+                      when={!pristine && !model.update.isPending}
+                    />
+                  </Fragment>
                 )}
-
-                <NavigationModal
-                  modalLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.modalLabel' })}
-                  continueLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.continueLabel' })}
-                  dismissLabel={intl.formatMessage({ id: 'ui-eholdings.navModal.dismissLabel' })}
-                  when={!pristine && !model.update.isPending}
-                />
-              </Fragment>
-            )}
-          />
-        </form>
+              />
+            </form>
+          )}
+        />
         <Modal
           open={showSelectionModal}
           size="small"
