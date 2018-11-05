@@ -93,6 +93,7 @@ class PackageCoverageFields extends Component {
           }
           name="customCoverages"
           renderField={this.renderField}
+          validate={this.validate}
         />
       </div>
     );
