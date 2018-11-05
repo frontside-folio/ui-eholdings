@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Field, FieldArray } from 'redux-form';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 
 import {
   Datepicker,
@@ -13,12 +13,40 @@ import styles from './package-coverage-fields.css';
 
 class PackageCoverageFields extends Component {
   static propTypes = {
-    initialValue: PropTypes.array
+    initialValue: PropTypes.array,
+    intl: intlShape
   };
 
   static defaultProps = {
     initialValue: []
   };
+
+  validate = (values) => {
+    let { intl } = this.props;
+    moment.locale(intl.locale);
+    let dateFormat = moment.localeData()._longDateFormat.L;
+    const errors = {};
+
+    values.forEach((dateRange, index) => {
+      let dateRangeErrors = {};
+
+      if (dateRange.beginCoverage && !moment.utc(dateRange.beginCoverage).isValid()) {
+        dateRangeErrors.beginCoverage = <FormattedMessage id="ui-eholdings.validate.errors.dateRange.format" values={{ dateFormat }} />;
+      }
+
+      if (dateRange.endCoverage && !dateRange.beginCoverage) {
+        dateRangeErrors.beginCoverage = <FormattedMessage id="ui-eholdings.validate.errors.dateRange.format" values={{ dateFormat }} />;
+      }
+
+      if (dateRange.endCoverage && moment.utc(dateRange.beginCoverage).isAfter(moment.utc(dateRange.endCoverage))) {
+        dateRangeErrors.beginCoverage = <FormattedMessage id="ui-eholdings.validate.errors.dateRange.startDateBeforeEndDate" />;
+      }
+
+      errors[index] = dateRangeErrors;
+    });
+
+    return errors;
+  }
 
   renderField = (dateRange) => {
     return (
@@ -71,31 +99,4 @@ class PackageCoverageFields extends Component {
   }
 }
 
-export default PackageCoverageFields;
-
-export function validate(values, props) {
-  let { intl } = props;
-  moment.locale(intl.locale);
-  let dateFormat = moment.localeData()._longDateFormat.L;
-  const errors = {};
-
-  values.customCoverages.forEach((dateRange, index) => {
-    let dateRangeErrors = {};
-
-    if (dateRange.beginCoverage && !moment.utc(dateRange.beginCoverage).isValid()) {
-      dateRangeErrors.beginCoverage = <FormattedMessage id="ui-eholdings.validate.errors.dateRange.format" values={{ dateFormat }} />;
-    }
-
-    if (dateRange.endCoverage && !dateRange.beginCoverage) {
-      dateRangeErrors.beginCoverage = <FormattedMessage id="ui-eholdings.validate.errors.dateRange.format" values={{ dateFormat }} />;
-    }
-
-    if (dateRange.endCoverage && moment.utc(dateRange.beginCoverage).isAfter(moment.utc(dateRange.endCoverage))) {
-      dateRangeErrors.beginCoverage = <FormattedMessage id="ui-eholdings.validate.errors.dateRange.startDateBeforeEndDate" />;
-    }
-
-    errors[index] = dateRangeErrors;
-  });
-
-  return { customCoverages: errors };
-}
+export default injectIntl(PackageCoverageFields);

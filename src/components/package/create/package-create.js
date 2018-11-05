@@ -1,8 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { compose } from 'redux';
 import { reduxForm } from 'redux-form';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import {
   Icon,
@@ -12,7 +11,7 @@ import {
 
 import DetailsViewSection from '../../details-view-section';
 import NameField, { validate as validatePackageName } from '../_fields/name';
-import CoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
+import CoverageFields from '../_fields/custom-coverage';
 import ContentTypeField from '../_fields/content-type';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
@@ -121,16 +120,13 @@ class PackageCreate extends Component {
   }
 }
 
-const validate = (values, props) => {
-  return Object.assign({}, validatePackageName(values), validateCoverageDates(values, props));
+const validate = (values) => {
+  return Object.assign({}, validatePackageName(values));
 };
 
-export default compose(
-  injectIntl,
-  reduxForm({
-    validate,
-    enableReinitialize: true,
-    form: 'PackageCreate',
-    destroyOnUnmount: false
-  })
-)(PackageCreate);
+export default reduxForm({
+  validate,
+  enableReinitialize: true,
+  form: 'PackageCreate',
+  destroyOnUnmount: false
+})(PackageCreate);

@@ -1,8 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { compose } from 'redux';
 import { reduxForm, Field } from 'redux-form';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import {
   Accordion,
@@ -17,7 +16,7 @@ import {
 import { processErrors } from '../../utilities';
 
 import DetailsView from '../../details-view';
-import CoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
+import CoverageFields from '../_fields/custom-coverage';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
 import PaneHeaderButton from '../../pane-header-button';
@@ -401,16 +400,13 @@ class ManagedPackageEdit extends Component {
   }
 }
 
-const validate = (values, props) => {
-  return Object.assign({}, validateCoverageDates(values, props), validateToken(values));
+const validate = (values) => {
+  return Object.assign({}, validateToken(values));
 };
 
-export default compose(
-  injectIntl,
-  reduxForm({
-    validate,
-    enableReinitialize: true,
-    form: 'ManagedPackageEdit',
-    destroyOnUnmount: false,
-  })
-)(ManagedPackageEdit);
+export default reduxForm({
+  validate,
+  enableReinitialize: true,
+  form: 'ManagedPackageEdit',
+  destroyOnUnmount: false,
+})(ManagedPackageEdit);

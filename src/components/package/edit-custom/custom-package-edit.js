@@ -1,8 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { compose } from 'redux';
 import { reduxForm, Field } from 'redux-form';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import {
   Accordion,
@@ -19,7 +18,7 @@ import { processErrors } from '../../utilities';
 
 import DetailsView from '../../details-view';
 import NameField, { validate as validatePackageName } from '../_fields/name';
-import CoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
+import CoverageFields from '../_fields/custom-coverage';
 import ContentTypeField from '../_fields/content-type';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
@@ -370,17 +369,14 @@ class CustomPackageEdit extends Component {
   }
 }
 
-const validate = (values, props) => {
-  return Object.assign({}, validatePackageName(values), validateCoverageDates(values, props));
+const validate = (values) => {
+  return Object.assign({}, validatePackageName(values));
 };
 
 
-export default compose(
-  injectIntl,
-  reduxForm({
-    validate,
-    form: 'CustomPackageEdit',
-    enableReinitialize: true,
-    destroyOnUnmount: false,
-  })
-)(CustomPackageEdit);
+export default reduxForm({
+  validate,
+  form: 'CustomPackageEdit',
+  enableReinitialize: true,
+  destroyOnUnmount: false,
+})(CustomPackageEdit);
