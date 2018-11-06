@@ -16,11 +16,11 @@ export default class CoverageStatementFields extends Component {
     let errors;
 
     if (value && value.length > 350) {
-      errors.coverageStatement = <FormattedMessage id="ui-eholdings.validate.errors.coverageStatement.length" />;
+      errors = <FormattedMessage id="ui-eholdings.validate.errors.coverageStatement.length" />;
     }
 
     if (value === 'yes' && value.length === 0) {
-      errors.coverageStatement = <FormattedMessage id="ui-eholdings.validate.errors.coverageStatement.blank" />;
+      errors = <FormattedMessage id="ui-eholdings.validate.errors.coverageStatement.blank" />;
     }
 
     return errors;
@@ -60,6 +60,7 @@ export default class CoverageStatementFields extends Component {
             onChange={(e, newValue) => {
               change('hasCoverageStatement', (newValue.length > 0) ? 'yes' : 'no');
             }}
+            validate={this.validate}
           />
         </div>
       </fieldset>
