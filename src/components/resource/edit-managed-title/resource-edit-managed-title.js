@@ -21,7 +21,7 @@ import DetailsView from '../../details-view';
 import VisibilityField from '../_fields/visibility';
 import CoverageStatementFields from '../_fields/coverage-statement';
 import ManagedCoverageFields, { validate as validateCoverageDates } from '../_fields/managed-coverage';
-import CustomEmbargoFields, { validate as validateEmbargo } from '../_fields/custom-embargo';
+import CustomEmbargoFields from '../_fields/custom-embargo';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
 import PaneHeaderButton from '../../pane-header-button';
@@ -385,7 +385,7 @@ class ResourceEditManagedTitle extends Component {
 }
 
 const validate = (values, props) => {
-  return Object.assign({}, validateCoverageDates(values, props), validateEmbargo(values));
+  return validateCoverageDates(values, props);
 };
 
 const selector = formValueSelector('ResourceEditManagedTitle');

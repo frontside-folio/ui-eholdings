@@ -21,7 +21,7 @@ import VisibilityField from '../_fields/visibility';
 import CustomCoverageFields, { validate as validateCoverageDates } from '../_fields/custom-coverage';
 import CustomUrlFields from '../_fields/custom-url';
 import CoverageStatementFields from '../_fields/coverage-statement';
-import CustomEmbargoFields, { validate as validateEmbargo } from '../_fields/custom-embargo';
+import CustomEmbargoFields from '../_fields/custom-embargo';
 import NavigationModal from '../../navigation-modal';
 import Toaster from '../../toaster';
 import PaneHeaderButton from '../../pane-header-button';
@@ -374,9 +374,7 @@ class ResourceEditCustomTitle extends Component {
 }
 
 const validate = (values, props) => {
-  return Object.assign({},
-    validateCoverageDates(values, props),
-    validateEmbargo(values));
+  return validateCoverageDates(values, props);
 };
 
 const selector = formValueSelector('ResourceEditCustomTitle');
