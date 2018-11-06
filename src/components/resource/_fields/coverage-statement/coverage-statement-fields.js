@@ -6,11 +6,25 @@ import { RadioButton, TextArea } from '@folio/stripes/components';
 import { FormattedMessage } from 'react-intl';
 import styles from './coverage-statement-fields.css';
 
-class CoverageStatementFields extends Component {
+export default class CoverageStatementFields extends Component {
   static propTypes = {
     change: PropTypes.func.isRequired,
     coverageDates: PropTypes.node
   };
+
+  validate(value) {
+    let errors;
+
+    if (value && value.length > 350) {
+      errors.coverageStatement = <FormattedMessage id="ui-eholdings.validate.errors.coverageStatement.length" />;
+    }
+
+    if (value === 'yes' && value.length === 0) {
+      errors.coverageStatement = <FormattedMessage id="ui-eholdings.validate.errors.coverageStatement.blank" />;
+    }
+
+    return errors;
+  }
 
   render() {
     let { change, coverageDates } = this.props;
@@ -51,20 +65,4 @@ class CoverageStatementFields extends Component {
       </fieldset>
     );
   }
-}
-
-export default CoverageStatementFields;
-
-export function validate(values) {
-  const errors = {};
-
-  if (values.coverageStatement && values.coverageStatement.length > 350) {
-    errors.coverageStatement = <FormattedMessage id="ui-eholdings.validate.errors.coverageStatement.length" />;
-  }
-
-  if (values.hasCoverageStatement === 'yes' && values.coverageStatement.length === 0) {
-    errors.coverageStatement = <FormattedMessage id="ui-eholdings.validate.errors.coverageStatement.blank" />;
-  }
-
-  return errors;
 }

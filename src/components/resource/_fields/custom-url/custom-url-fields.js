@@ -3,34 +3,31 @@ import { Field } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
 import { TextField } from '@folio/stripes/components';
 
-class CustomUrlFields extends Component {
-  render() {
-    return (
-      <div>
-        <div data-test-eholdings-custom-url-textfield>
-          <Field
-            name="customUrl"
-            component={TextField}
-            label={<FormattedMessage id="ui-eholdings.customUrl" />}
-          />
-        </div>
-      </div>
-    );
-  }
-}
+function validate(value) {
+  let errors;
 
-export function validate(values) {
-  const errors = {};
-
-  if (values.customUrl && values.customUrl.length > 600) {
-    errors.customUrl = <FormattedMessage id="ui-eholdings.validate.errors.customUrl.length" />;
+  if (value && value.length > 600) {
+    errors = <FormattedMessage id="ui-eholdings.validate.errors.customUrl.length" />;
   }
 
-  if (values.customUrl && values.customUrl.search(/http?[s]?:\/\//g)) {
-    errors.customUrl = <FormattedMessage id="ui-eholdings.validate.errors.customUrl.include" />;
+  if (value && value.search(/http?[s]?:\/\//g)) {
+    errors = <FormattedMessage id="ui-eholdings.validate.errors.customUrl.include" />;
   }
 
   return errors;
 }
 
-export default CustomUrlFields;
+export default class CustomUrlFields extends Component {
+  render() {
+    return (
+      <div data-test-eholdings-custom-url-textfield>
+        <Field
+          name="customUrl"
+          component={TextField}
+          label={<FormattedMessage id="ui-eholdings.customUrl" />}
+          validate={validate}
+        />
+      </div>
+    );
+  }
+}

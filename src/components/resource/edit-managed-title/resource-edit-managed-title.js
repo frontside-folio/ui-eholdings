@@ -19,7 +19,7 @@ import { processErrors, isBookPublicationType } from '../../utilities';
 
 import DetailsView from '../../details-view';
 import VisibilityField from '../_fields/visibility';
-import CoverageStatementFields, { validate as validateCoverageStatement } from '../_fields/coverage-statement';
+import CoverageStatementFields from '../_fields/coverage-statement';
 import ManagedCoverageFields, { validate as validateCoverageDates } from '../_fields/managed-coverage';
 import CustomEmbargoFields, { validate as validateEmbargo } from '../_fields/custom-embargo';
 import NavigationModal from '../../navigation-modal';
@@ -385,7 +385,7 @@ class ResourceEditManagedTitle extends Component {
 }
 
 const validate = (values, props) => {
-  return Object.assign({}, validateCoverageDates(values, props), validateCoverageStatement(values), validateEmbargo(values));
+  return Object.assign({}, validateCoverageDates(values, props), validateEmbargo(values));
 };
 
 const selector = formValueSelector('ResourceEditManagedTitle');
