@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { Field, FieldArray } from 'redux-form';
+import { Field } from 'react-final-form';
+import { FieldArray } from 'react-final-form-arrays';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { FormattedDate, FormattedMessage } from 'react-intl';
@@ -17,12 +18,7 @@ import styles from './managed-coverage-fields.css';
 
 class ResourceCoverageFields extends Component {
   static propTypes = {
-    initial: PropTypes.array,
     model: PropTypes.object.isRequired
-  };
-
-  static defaultProps = {
-    initial: []
   };
 
   renderField = (dateRange) => {
@@ -58,8 +54,8 @@ class ResourceCoverageFields extends Component {
     );
   }
 
-  renderCoverageFields = ({ fields, name }) => {
-    const { initial, model } = this.props;
+  renderCoverageFields = ({ fields, name, meta: { initial } }) => {
+    const { model } = this.props;
 
     return (
       <fieldset>
