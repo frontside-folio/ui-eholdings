@@ -30,7 +30,6 @@ import styles from './managed-package-edit.css';
 class ManagedPackageEdit extends Component {
   static propTypes = {
     addPackageToHoldings: PropTypes.func.isRequired,
-    change: PropTypes.func,
     fullViewLink: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object
@@ -47,10 +46,7 @@ class ManagedPackageEdit extends Component {
 
   state = {
     showSelectionModal: false,
-    allowFormToSubmit: false,
     packageSelected: this.props.initialValues.isSelected,
-    formValues: {},
-    initialValues: this.props.initialValues,
     sections: {
       packageHoldingStatus: true,
       packageSettings: true,
@@ -58,72 +54,44 @@ class ManagedPackageEdit extends Component {
     }
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let stateUpdates = {};
-
-    if (nextProps.model.update.errors.length) {
-      stateUpdates.showSelectionModal = false;
-    }
-
-    if (nextProps.initialValues.isSelected !== prevState.initialValues.isSelected) {
-      Object.assign(stateUpdates, {
-        initialValues: {
-          isSelected: nextProps.initialValues.isSelected
-        },
-        packageSelected: nextProps.initialValues.isSelected
-      });
-    }
-
-    return stateUpdates;
-  }
-
   handleSelectionAction = () => {
+    const { model, onSubmit } = this.props;
+
     this.setState({
       packageSelected: true,
-      formValues: {
+    }, () => onSubmit(
+      Object.assign(model.data.attributes, {
         allowKbToAddTitles: true,
-        isSelected: true
-      }
-    }, () => this.handleOnSubmit(this.state.formValues));
+        isSelected: true,
+      })
+    ));
   }
 
   handleDeselectionAction = () => {
     this.setState({
-      formValues: {
-        isSelected: false
-      }
-    }, () => this.handleOnSubmit(this.state.formValues));
+      showSelectionModal: true,
+    });
   };
 
-  commitSelectionToggle = () => {
-    this.setState({
-      allowFormToSubmit: true
-    }, () => { this.handleOnSubmit(this.state.formValues); });
+  commitDeselection = () => {
+    const { model, onSubmit } = this.props;
+
+    onSubmit(
+      Object.assign(model.data.attributes, {
+        isSelected: false,
+      })
+    );
   };
 
-  cancelSelectionToggle = () => {
+  cancelDeselection = () => {
     this.setState({
       showSelectionModal: false,
       packageSelected: true,
-    }, () => {
-      this.props.change('isSelected', true);
     });
   };
 
   handleOnSubmit = (values) => {
-    if (this.state.allowFormToSubmit === false && values.isSelected === false) {
-      this.setState({
-        showSelectionModal: true,
-        formValues: values
-      });
-    } else {
-      this.setState({
-        allowFormToSubmit: false,
-        formValues: {}
-      }, () => {
-        this.props.onSubmit(values);
-      });
-    }
+    this.props.onSubmit(values);
   };
 
   toggleSection = ({ id: sectionId }) => {
@@ -218,6 +186,7 @@ class ManagedPackageEdit extends Component {
       model,
       initialValues,
       handleSubmit,
+      onSubmit,
       pristine,
       proxyTypes,
       provider
@@ -239,7 +208,7 @@ class ManagedPackageEdit extends Component {
     return (
       <div>
         <Toaster toasts={processErrors(model)} position="bottom" />
-        <form onSubmit={handleSubmit(this.handleOnSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <DetailsView
             type="package"
             model={model}
@@ -405,13 +374,13 @@ class ManagedPackageEdit extends Component {
                 'label': model.update.isPending ?
                   <FormattedMessage id="ui-eholdings.package.modal.buttonWorking" /> :
                   <FormattedMessage id="ui-eholdings.package.modal.buttonConfirm" />,
-                'onClick': this.commitSelectionToggle,
+                'onClick': this.commitDeselection,
                 'disabled': model.update.isPending,
                 'data-test-eholdings-package-deselection-confirmation-modal-yes': true
               }}
               secondaryButton={{
                 'label': <FormattedMessage id="ui-eholdings.package.modal.buttonCancel" />,
-                'onClick': this.cancelSelectionToggle,
+                'onClick': this.cancelDeselection,
                 'data-test-eholdings-package-deselection-confirmation-modal-no': true
               }}
             />
