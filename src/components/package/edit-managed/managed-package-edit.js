@@ -54,6 +54,22 @@ class ManagedPackageEdit extends Component {
     }
   };
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let stateUpdates = {};
+
+    if (nextProps.model.update.errors.length) {
+      stateUpdates.showSelectionModal = false;
+    }
+
+    if (nextProps.initialValues.isSelected !== prevState.initialValues.isSelected) {
+      Object.assign(stateUpdates, {
+        packageSelected: nextProps.initialValues.isSelected
+      });
+    }
+
+    return stateUpdates;
+  }
+
   handleSelectionAction = () => {
     const { model, onSubmit } = this.props;
 
