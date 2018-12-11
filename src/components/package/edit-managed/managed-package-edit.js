@@ -46,7 +46,7 @@ class ManagedPackageEdit extends Component {
 
   state = {
     showSelectionModal: false,
-    packageSelected: this.props.initialValues.isSelected,
+    packageSelected: this.props.model.isSelected,
     sections: {
       packageHoldingStatus: true,
       packageSettings: true,
@@ -61,9 +61,9 @@ class ManagedPackageEdit extends Component {
       stateUpdates.showSelectionModal = false;
     }
 
-    if (nextProps.initialValues.isSelected !== prevState.initialValues.isSelected) {
+    if (nextProps.model.isSelected !== prevState.model.isSelected) {
       Object.assign(stateUpdates, {
-        packageSelected: nextProps.initialValues.isSelected
+        packageSelected: nextProps.model.isSelected
       });
     }
 
