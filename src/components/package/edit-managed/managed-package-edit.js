@@ -54,18 +54,18 @@ class ManagedPackageEdit extends Component {
     }
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps) {
     let stateUpdates = {};
 
     if (nextProps.model.update.errors.length) {
       stateUpdates.showSelectionModal = false;
     }
 
-    if (nextProps.model.isSelected !== prevState.model.isSelected) {
-      Object.assign(stateUpdates, {
-        packageSelected: nextProps.model.isSelected
-      });
-    }
+    // if (nextProps.model.isSelected !== prevState.packageSelected) {
+    //   Object.assign(stateUpdates, {
+    //     packageSelected: nextProps.model.isSelected
+    //   });
+    // }
 
     return stateUpdates;
   }
