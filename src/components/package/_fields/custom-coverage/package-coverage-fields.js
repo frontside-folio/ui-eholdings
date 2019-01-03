@@ -16,8 +16,6 @@ import {
 
 import styles from './package-coverage-fields.css';
 
-const COVERAGE_DATE_AMOUNT = 1;
-
 class PackageCoverageFields extends Component {
   static propTypes = {
     initialValue: PropTypes.array,
@@ -27,12 +25,6 @@ class PackageCoverageFields extends Component {
   static defaultProps = {
     initialValue: [],
   };
-
-  constructor(props) {
-    super(props);
-
-    this.state = { coverageDateAmount: COVERAGE_DATE_AMOUNT };
-  }
 
   validateCoverageDate = (value) => {
     const { intl } = this.props;
@@ -94,25 +86,8 @@ class PackageCoverageFields extends Component {
     } = fieldArrayProps;
 
     const { initialValue } = this.props;
-    const { coverageDateAmount } = this.state;
 
-    const onAddField = () => {
-      fields.push({});
-
-      this.setState((prevState) => ({
-        coverageDateAmount: prevState.coverageDateAmount + 1,
-      }));
-    };
-
-    const onRemoveField = (index) => {
-      fields.remove(index);
-
-      this.setState((prevState) => ({
-        coverageDateAmount: prevState.coverageDateAmount - 1,
-      }));
-    };
-
-    const hasAddButton = coverageDateAmount === 0 || (coverageDateAmount === 1 && !initialValue[0]);
+    const hasAddButton = fields.length === 0 || (fields.length === 1 && !initialValue[0]);
     const hasEmptyMessage = initialValue.length > 0 && initialValue[0].beginCoverage;
     const addLabel = hasAddButton
       ? <Icon icon="plus-sign"><FormattedMessage id="ui-eholdings.package.coverage.addDateRange" /></Icon>
@@ -128,8 +103,8 @@ class PackageCoverageFields extends Component {
         emptyMessage={emptyMessage}
         fields={fields}
         name={name}
-        onAdd={onAddField}
-        onRemove={onRemoveField}
+        onAdd={() => fields.push({})}
+        onRemove={(index) => fields.remove(index)}
         renderField={this.renderField}
       />
     );
