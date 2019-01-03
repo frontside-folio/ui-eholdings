@@ -16,8 +16,6 @@ import {
 
 import styles from './package-coverage-fields.css';
 
-const COVERAGE_DATE_AMOUNT = 1;
-
 class PackageCoverageFields extends Component {
   static propTypes = {
     initialValue: PropTypes.array,
@@ -27,12 +25,6 @@ class PackageCoverageFields extends Component {
   static defaultProps = {
     initialValue: [],
   };
-
-  constructor(props) {
-    super(props);
-
-    this.state = { coverageDateAmount: COVERAGE_DATE_AMOUNT };
-  }
 
   validateCoverageDate = (value) => {
     const { intl } = this.props;
@@ -87,61 +79,32 @@ class PackageCoverageFields extends Component {
     );
   }
 
-  renderRepeatableField = (fieldArrayProps) => {
-    const {
-      fields,
-      name,
-    } = fieldArrayProps;
-
-    const { initialValue } = this.props;
-    const { coverageDateAmount } = this.state;
-
-    const onAddField = () => {
-      fields.push({});
-
-      this.setState((prevState) => ({
-        coverageDateAmount: prevState.coverageDateAmount + 1,
-      }));
-    };
-
-    const onRemoveField = (index) => {
-      fields.remove(index);
-
-      this.setState((prevState) => ({
-        coverageDateAmount: prevState.coverageDateAmount - 1,
-      }));
-    };
-
-    const hasAddButton = coverageDateAmount === 0 || (coverageDateAmount === 1 && !initialValue[0]);
-    const hasEmptyMessage = initialValue.length > 0 && initialValue[0].beginCoverage;
-    const addLabel = hasAddButton
-      ? <Icon icon="plus-sign"><FormattedMessage id="ui-eholdings.package.coverage.addDateRange" /></Icon>
-      : null;
-
-    const emptyMessage = hasEmptyMessage
-      ? <FormattedMessage id="ui-eholdings.package.noCoverageDates" />
-      : null;
-
-    return (
-      <RepeatableField
-        addLabel={addLabel}
-        emptyMessage={emptyMessage}
-        fields={fields}
-        name={name}
-        onAdd={onAddField}
-        onRemove={onRemoveField}
-        renderField={this.renderField}
-      />
-    );
-  };
-
   render() {
+    const { initialValue } = this.props;
+
     return (
       <div data-test-eholdings-package-coverage-fields>
-        <FieldArray
-          component={this.renderRepeatableField}
-          name="customCoverages"
-        />
+        <FieldArray name="customCoverages">
+          {({ fields }) => (
+            <RepeatableField
+              addLabel={
+                fields.length === 0 || (fields.length === 1 && !initialValue[0]) ? (
+                  <Icon icon="plus-sign">
+                    <FormattedMessage id="ui-eholdings.package.coverage.addDateRange" />
+                  </Icon>
+                ) : null
+              }
+              emptyMessage={
+                initialValue.length > 0 && initialValue[0].beginCoverage ?
+                  <FormattedMessage id="ui-eholdings.package.noCoverageDates" /> : ''
+              }
+              fields={fields}
+              onAdd={() => fields.push({})}
+              onRemove={(index) => fields.remove(index)}
+              renderField={this.renderField}
+            />
+          )}
+        </FieldArray>
       </div>
     );
   }
