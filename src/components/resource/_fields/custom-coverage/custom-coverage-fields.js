@@ -59,20 +59,25 @@ class ResourceCoverageFields extends Component {
 
     return (
       <div data-test-eholdings-resource-coverage-fields>
-        <FieldArray
-          addLabel={
-            <Icon icon="plus-sign">
-              <FormattedMessage id="ui-eholdings.package.coverage.addDateRange" />
-            </Icon>
-          }
-          component={RepeatableField}
-          emptyMessage={
-            initialValue.length > 0 && initialValue[0].beginCoverage ?
-              <FormattedMessage id="ui-eholdings.package.noCoverageDates" /> : ''
-          }
-          name="customCoverages"
-          renderField={this.renderField}
-        />
+        <FieldArray name="customCoverages">
+          {({ fields }) => (
+            <RepeatableField
+              addLabel={
+                <Icon icon="plus-sign">
+                  <FormattedMessage id="ui-eholdings.package.coverage.addDateRange" />
+                </Icon>
+              }
+              emptyMessage={
+                initialValue && initialValue.length > 0 && initialValue[0].beginCoverage ?
+                  <FormattedMessage id="ui-eholdings.package.noCoverageDates" /> : ''
+              }
+              fields={fields}
+              onAdd={() => fields.push({})}
+              onRemove={index => fields.remove(index)}
+              renderField={this.renderField}
+            />
+          )}
+        </FieldArray>
       </div>
     );
   }

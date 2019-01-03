@@ -58,70 +58,68 @@ class ResourceCoverageFields extends Component {
     );
   }
 
-  renderCoverageFields = (fieldArrayProps) => {
-    let { fields } = fieldArrayProps;
-    let { initialValue, model } = this.props;
-    return (
-      <fieldset>
-        <div>
-          <RadioButton
-            label={<FormattedMessage id="ui-eholdings.label.managed.coverageDates" />}
-            disabled={model.managedCoverages.length === 0}
-            checked={fields.length === 0 && model.managedCoverages.length > 0}
-            onChange={(e) => {
-              if (e.target.value === 'on') {
-                fields.removeAll();
-              }
-            }}
-          />
-          <div className={styles['coverage-fields-category']} data-test-eholdings-resource-edit-managed-coverage-list>
-            {model.managedCoverages.length > 0 ? (
-              <CoverageDateList
-                coverageArray={model.managedCoverages}
-                isYearOnly={isBookPublicationType(model.publicationType)}
-              />
-            ) : (
-              <p><FormattedMessage id="ui-eholdings.resource.managedCoverageDates.notSet" /></p>
-            )}
-          </div>
-        </div>
-        <div>
-          <RadioButton
-            label={<FormattedMessage id="ui-eholdings.label.custom.coverageDates" />}
-            checked={fields.length > 0}
-            onChange={(e) => {
-              if (e.target.value === 'on' && fields.length === 0) {
-                fields.push({});
-              }
-            }}
-          />
-          <div className={styles['coverage-fields-category']}>
-            <RepeatableField
-              addLabel={
-                <Icon icon="plus-sign">
-                  <FormattedMessage id="ui-eholdings.package.coverage.addDateRange" />
-                </Icon>
-              }
-              emptyMessage={
-                initialValue.length > 0 && initialValue[0].beginCoverage ?
-                  <FormattedMessage id="ui-eholdings.package.noCoverageDates" /> : ''
-              }
-              fields={fields}
-              name="customCoverages"
-              onAdd={() => fields.push({})}
-              onRemove={(index) => fields.remove(index)}
-              renderField={this.renderField}
-            />
-          </div>
-        </div>
-      </fieldset>
-    );
-  };
-
   render() {
+    const { initialValue, model } = this.props;
+
     return (
       <div data-test-eholdings-resource-coverage-fields>
-        <FieldArray name="customCoverages" component={this.renderCoverageFields} />
+        <FieldArray name="customCoverages">
+          {({ fields }) => (
+            <fieldset>
+              <div>
+                <RadioButton
+                  label={<FormattedMessage id="ui-eholdings.label.managed.coverageDates" />}
+                  disabled={model.managedCoverages.length === 0}
+                  checked={fields.length === 0 && model.managedCoverages.length > 0}
+                  onChange={(e) => {
+                    if (e.target.value === 'on') {
+                      fields.removeAll();
+                    }
+                  }}
+                />
+                <div className={styles['coverage-fields-category']} data-test-eholdings-resource-edit-managed-coverage-list>
+                  {model.managedCoverages.length > 0 ? (
+                    <CoverageDateList
+                      coverageArray={model.managedCoverages}
+                      isYearOnly={isBookPublicationType(model.publicationType)}
+                    />
+                  ) : (
+                    <p><FormattedMessage id="ui-eholdings.resource.managedCoverageDates.notSet" /></p>
+                  )}
+                </div>
+              </div>
+              <div>
+                <RadioButton
+                  label={<FormattedMessage id="ui-eholdings.label.custom.coverageDates" />}
+                  checked={fields.length > 0}
+                  onChange={(e) => {
+                    if (e.target.value === 'on' && fields.length === 0) {
+                      fields.push({});
+                    }
+                  }}
+                />
+                <div className={styles['coverage-fields-category']}>
+                  <RepeatableField
+                    addLabel={
+                      <Icon icon="plus-sign">
+                        <FormattedMessage id="ui-eholdings.package.coverage.addDateRange" />
+                      </Icon>
+                    }
+                    emptyMessage={
+                      initialValue.length > 0 && initialValue[0].beginCoverage ?
+                        <FormattedMessage id="ui-eholdings.package.noCoverageDates" /> : ''
+                    }
+                    fields={fields}
+                    name="customCoverages"
+                    onAdd={() => fields.push({})}
+                    onRemove={(index) => fields.remove(index)}
+                    renderField={this.renderField}
+                  />
+                </div>
+              </div>
+            </fieldset>
+          )}
+        </FieldArray>
       </div>
     );
   }
