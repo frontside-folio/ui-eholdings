@@ -362,7 +362,6 @@ export default class ResourceEditManagedTitle extends Component {
                             <FormattedMessage id="ui-eholdings.label.dates" />
                           </Headline>
                           <ManagedCoverageFields
-                            initial={initialValues.customCoverages}
                             model={model}
                           />
 

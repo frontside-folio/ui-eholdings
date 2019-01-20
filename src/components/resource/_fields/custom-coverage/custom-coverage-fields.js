@@ -16,8 +16,7 @@ import styles from './custom-coverage-fields.css';
 class ResourceCoverageFields extends Component {
   static propTypes = {
     intl: intlShape.isRequired,
-    packageBeginCoverage: PropTypes.string.isRequired,
-    packageEndCoverage: PropTypes.string.isRequired,
+    model: PropTypes.object.isRequired,
   };
 
   /**
@@ -118,7 +117,11 @@ class ResourceCoverageFields extends Component {
    * @returns {} - an error object if errors are found, or `false` otherwise
    */
   validateWithinPackageRange = (dateRange) => {
-    const { packageBeginCoverage, packageEndCoverage } = this.props;
+    const { model: { package: { customCoverage } } } = this.props;
+    const {
+      beginCoverage: packageBeginCoverage,
+      endCoverage: packageEndCoverage
+    } = customCoverage;
     // javascript/moment has no mechanism for "infinite", so we
     // use an absurd future date to represent the concept of "present"
     let present = moment.utc('9999-09-09T05:00:00.000Z');

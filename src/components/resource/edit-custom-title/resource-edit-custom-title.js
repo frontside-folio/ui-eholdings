@@ -333,8 +333,7 @@ export default class ResourceEditCustomTitle extends Component {
                         <Fragment>
                           <Headline tag="h4"><FormattedMessage id="ui-eholdings.label.dates" /></Headline>
                           <CustomCoverageFields
-                            packageBeginCoverage={model.package.customCoverage.beginCoverage}
-                            packageEndCoverage={model.package.customCoverage.endCoverage}
+                            model={model}
                           />
 
                           <Headline tag="h4">
