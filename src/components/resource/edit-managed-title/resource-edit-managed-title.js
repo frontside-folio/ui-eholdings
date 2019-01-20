@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Form, FormSpy } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
+import createDecorator from 'final-form-calculate';
 import { FormattedMessage } from 'react-intl';
 import update from 'lodash/fp/update';
 
@@ -26,6 +27,25 @@ import Toaster from '../../toaster';
 import PaneHeaderButton from '../../pane-header-button';
 import CoverageDateList from '../../coverage-date-list';
 import ProxySelectField from '../../proxy-select';
+
+const coverageStatementDecorator = createDecorator(
+  {
+    field: 'hasCoverageStatement',
+    updates: {
+      coverageStatement: (hasCoverageStatement, { coverageStatement }) => {
+        return (hasCoverageStatement === 'no') ? '' : coverageStatement;
+      }
+    }
+  },
+  {
+    field: 'coverageStatement',
+    updates: {
+      hasCoverageStatement: (coverageStatement) => {
+        return (coverageStatement && coverageStatement.length) > 0 ? 'yes' : 'no';
+      }
+    }
+  }
+);
 
 export default class ResourceEditManagedTitle extends Component {
   static propTypes = {
@@ -139,18 +159,31 @@ export default class ResourceEditManagedTitle extends Component {
   };
 
   renderCoverageDates = () => {
-    let { model: { managedCoverages, publicationType } } = this.props;
-
     return (
       <FormSpy subscription={{ values: true }}>
-        {({ values }) => (
-          <CoverageDateList
-            coverageArray={
-              values.customCoverages && values.customCoverages.length > 0 ? values.customCoverages : managedCoverages
-            }
-            isYearOnly={isBookPublicationType(publicationType)}
-          />
-        )}
+        {({ values }) => {
+          const { model } = this.props;
+          const { customCoverages: customCoverageDateValues } = values;
+          let coverageDates = model.managedCoverages;
+
+          if (customCoverageDateValues && customCoverageDateValues.length > 0) {
+            coverageDates = customCoverageDateValues;
+          }
+
+          const nonEmptyCoverageDates = coverageDates
+            .filter((currentCoverageDate) => Object.keys(currentCoverageDate).length !== 0);
+
+          if (nonEmptyCoverageDates.length === 0) {
+            return null;
+          }
+
+          return (
+            <CoverageDateList
+              coverageArray={nonEmptyCoverageDates}
+              isYearOnly={isBookPublicationType(model.publicationType)}
+            />
+          );
+        }}
       </FormSpy>
     );
   };
@@ -225,6 +258,7 @@ export default class ResourceEditManagedTitle extends Component {
     return (
       <Form
         onSubmit={this.handleOnSubmit}
+        decorators={[coverageStatementDecorator]}
         mutators={{ ...arrayMutators }}
         initialValues={initialValues}
         render={({ handleSubmit, pristine, form: { change } }) => (
@@ -336,7 +370,6 @@ export default class ResourceEditManagedTitle extends Component {
                             <FormattedMessage id="ui-eholdings.label.coverageDisplay" />
                           </Headline>
                           <CoverageStatementFields
-                            change={change}
                             coverageDates={this.renderCoverageDates()}
                           />
 
