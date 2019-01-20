@@ -286,6 +286,7 @@ class ResourceCoverageFields extends Component {
         <FieldArray
           component={this.renderCoverageFields}
           name="customCoverages"
+          validate={this.validateDateRange}
         />
       </div>
     );
