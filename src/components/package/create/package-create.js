@@ -133,7 +133,7 @@ export default class PackageCreate extends Component {
                 </DetailsViewSection>
               </div>
             </form>
-            <NavigationModal when={!pristine && !request.isResolved} />
+            <NavigationModal when={!pristine && !request.isPending && !request.isResolved} />
           </div>
         )}
       />

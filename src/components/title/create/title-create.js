@@ -153,7 +153,7 @@ export default class TitleCreate extends Component {
                 </div>
               </form>
 
-              <NavigationModal when={!pristine && !request.isResolved} />
+              <NavigationModal when={!pristine && !request.isPending && !request.isResolved} />
             </Fragment>
           )}
         />
