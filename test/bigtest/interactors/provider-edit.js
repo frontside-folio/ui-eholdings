@@ -12,7 +12,7 @@ import {
   action,
   isPresent,
   selectable
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 import { hasClassBeginningWith } from './helpers';
 import Toast from './toast';
 

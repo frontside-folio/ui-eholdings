@@ -9,7 +9,7 @@ import {
   value,
   count,
   collection,
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 @interactor class TitleCreateDropDown {
   clickDropDownButton = clickable('button');

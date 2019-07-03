@@ -3,7 +3,7 @@ import {
   computed,
   text,
   isPresent
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 export default @interactor class PackageSelectionStatus {
   static defaultScope = '[data-test-eholdings-package-details-selected]';

@@ -8,7 +8,7 @@ import {
   attribute,
   text,
   is
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 import AgreementsAccordion from './agreements-accordion';
 import Toast from './toast';

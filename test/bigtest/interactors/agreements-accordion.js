@@ -5,7 +5,7 @@ import {
   isPresent,
   text,
   attribute,
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 export default @interactor class {
   isExpanded = !!attribute('#accordion-toggle-button-packageShowAgreements', 'aria-expanded');

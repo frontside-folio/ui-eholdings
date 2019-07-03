@@ -3,7 +3,7 @@ import {
   isPresent,
   clickable,
   text
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 @interactor class DeleteConfirmationModal {
   clickCancelButton = clickable('[data-test-confirmation-modal-cancel-button]');

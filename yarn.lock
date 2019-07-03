@@ -231,22 +231,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@bigtest/convergence@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@bigtest/convergence/-/convergence-0.10.0.tgz#ed2212b7034c84917ccfbaa8cf875730ee535702"
-  integrity sha512-jJBPq3TTmMD/s/5k/mINzL6EXyPdNq0cEDZXufICFjpXmuUabRS/PX/NfzmXVlNENDJ6yOrDnrsO4IJboNTu9g==
-
 "@bigtest/convergence@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@bigtest/convergence/-/convergence-1.1.1.tgz#b314d8b1edc392d3e8780f99499a9a03aa528d54"
   integrity sha512-zorukvQJ7JxD5Jqy3ChzhCJzlD45bZudBASbgJvY5ffw5Hu+/9Ia/+8KlU1/XRWm32O2P5SBB2soHoFtGi1eGQ==
-
-"@bigtest/interactor@^0.7.2":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@bigtest/interactor/-/interactor-0.7.2.tgz#64e82cbd935d2a7e62b58be7488d461e997a7b31"
-  integrity sha512-OwNRGT4E2sjI1PvwIWRRTilU+fUZWEF7HybLtfv2XoX55biWSowgsk1HU+jpq0LVuHGzB1y8f5Dc4v0zzntX6g==
-  dependencies:
-    "@bigtest/convergence" "^0.10.0"
 
 "@bigtest/mirage@^0.0.1":
   version "0.0.1"
@@ -2478,6 +2466,12 @@ bignumber.js@^2.1.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-2.4.0.tgz#838a992da9f9d737e0f4b2db0be62bb09dd0c5e8"
   integrity sha1-g4qZLan51zfg9LLbC+YrsJ3Qxeg=
+
+bigtest/interactor@bigtestjs/interactor#jc/is-focused:
+  version "0.9.2"
+  resolved "https://codeload.github.com/bigtestjs/interactor/tar.gz/7b616c81caf5f1fb858d254df62dd81b6a108255"
+  dependencies:
+    "@bigtest/convergence" "^1.1.1"
 
 binary-extensions@^1.0.0:
   version "1.13.1"

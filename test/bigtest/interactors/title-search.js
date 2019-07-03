@@ -10,7 +10,7 @@ import {
   value,
   text,
   is
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 import TagsAccordion from './tags-accordion';
 import SearchBadge from './search-badge';

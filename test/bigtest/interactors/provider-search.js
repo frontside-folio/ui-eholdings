@@ -10,7 +10,7 @@ import {
   interactor,
   value,
   text
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 import TagsAccordion from './tags-accordion';
 

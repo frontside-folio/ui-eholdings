@@ -12,7 +12,7 @@ import {
   value,
   computed,
   selectable,
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 import { AccordionInteractor } from '@folio/stripes-components/lib/Accordion/tests/interactor';
 

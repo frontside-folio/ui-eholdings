@@ -6,7 +6,7 @@ import {
   collection,
   is,
   blurrable
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 @interactor class NotesModal {
   isDisplayed = isPresent('[data-test-notes-modal]');

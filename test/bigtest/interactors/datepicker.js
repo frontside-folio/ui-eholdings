@@ -6,7 +6,7 @@ import {
   text,
   triggerable,
   blurrable
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 import { hasClassBeginningWith } from './helpers';
 
 export default @interactor class Datepicker {

@@ -8,7 +8,7 @@ import {
   scoped,
   property,
   value
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 import Datepicker from './datepicker';
 
 @interactor class PackageCreateDropDown {

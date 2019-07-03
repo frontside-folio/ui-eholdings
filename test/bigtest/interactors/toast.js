@@ -3,7 +3,7 @@ import {
   count,
   interactor,
   text
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 import style from '../../../src/components/toaster/style.css';
 
 @interactor class Toast {

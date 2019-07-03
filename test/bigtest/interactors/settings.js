@@ -8,7 +8,7 @@ import {
   property,
   value,
   isPresent
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 import Toast from './toast';
 
 import { hasClassBeginningWith } from './helpers';

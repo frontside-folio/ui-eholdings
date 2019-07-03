@@ -1,7 +1,7 @@
 import {
   interactor,
   clickable
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 @interactor class NavigationModal {
   clickContinue = clickable('[data-test-navigation-modal-continue]');

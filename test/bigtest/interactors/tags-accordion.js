@@ -2,7 +2,7 @@ import {
   action,
   isPresent,
   interactor,
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 import MultiSelectInteractor from '@folio/stripes-components/lib/MultiSelection/tests/interactor';
 import { AccordionInteractor } from '@folio/stripes-components/lib/Accordion/tests/interactor';

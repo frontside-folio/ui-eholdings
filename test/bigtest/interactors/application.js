@@ -1,7 +1,7 @@
 import {
   isPresent,
   interactor,
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 @interactor class ApplicationPage {
   doesNotHaveBackend = isPresent('[data-test-eholdings-no-backend]')

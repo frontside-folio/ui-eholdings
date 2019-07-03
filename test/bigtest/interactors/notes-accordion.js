@@ -5,7 +5,7 @@ import {
   collection,
   text,
   isVisible,
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 @interactor class Button {
   isDisplayed = isVisible();

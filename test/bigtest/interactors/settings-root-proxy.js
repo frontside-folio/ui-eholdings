@@ -5,7 +5,7 @@ import {
   interactor,
   property,
   value
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 import Toast from './toast';
 
 @interactor class SettingsRootProxyDropDown {

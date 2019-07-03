@@ -1,4 +1,4 @@
-import { computed } from '@bigtest/interactor';
+import { computed } from '@bigtest/interactor'; // eslint-disable-line
 
 export const hasClassBeginningWith = (selector, className) => {
   return computed(function () {

@@ -12,7 +12,7 @@ import {
   triggerable,
   is,
   attribute,
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 import AgreementsAccordion from './agreements-accordion';
 import TagsAccordion from './tags-accordion';

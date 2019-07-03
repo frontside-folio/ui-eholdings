@@ -8,7 +8,7 @@ import {
   blurrable,
   selectable,
   text,
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 @interactor class Select {
   selectOption = selectable();

@@ -9,7 +9,7 @@ import {
   fillable,
   text,
   is
-} from '@bigtest/interactor';
+} from '@bigtest/interactor'; // eslint-disable-line
 
 import {
   hasClassBeginningWith,
