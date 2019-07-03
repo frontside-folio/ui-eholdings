@@ -8,7 +8,7 @@ import {
   interactor,
   fillable,
   text,
-  is
+  isFocused
 } from '@bigtest/interactor'; // eslint-disable-line
 
 import {
@@ -46,7 +46,7 @@ import Toast from './toast';
 
   paneTitle = text('[data-test-eholdings-details-view-pane-title]');
   titleName = text('[data-test-eholdings-details-view-name="title"]');
-  nameHasFocus = is('[data-test-eholdings-details-view-name="title"]', ':focus');
+  nameHasFocus = isFocused('[data-test-eholdings-details-view-name="title"]');
   edition = text('[data-test-eholdings-title-show-edition]');
   publisherName = text('[data-test-eholdings-title-show-publisher-name]');
   publicationType = text('[data-test-eholdings-title-show-publication-type]');

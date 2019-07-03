@@ -9,7 +9,8 @@ import {
   interactor,
   value,
   text,
-  is
+  is,
+  isFocused
 } from '@bigtest/interactor'; // eslint-disable-line
 
 import TagsAccordion from './tags-accordion';
@@ -28,7 +29,7 @@ import SearchBadge from './search-badge';
   titleSearchFieldValue = value('[data-test-search-field] input[name="search"]');
   hasResults = isPresent('[data-test-results-pane] [data-test-pane-header] p');
   totalResults = text('[data-test-results-pane] [data-test-pane-header] p');
-  paneTitleHasFocus = is('[data-test-results-pane] [data-test-pane-header] h2 [tabindex]', ':focus');
+  paneTitleHasFocus = isFocused('[data-test-results-pane] [data-test-pane-header] h2 [tabindex]');
   packagePreviewPaneIsPresent = isPresent('[data-test-preview-pane="packages"]');
   titlePreviewPaneIsPresent = isPresent('[data-test-preview-pane="titles"]');
   hasBackButton = isPresent('[data-test-eholdings-details-view-back-button]');
@@ -94,7 +95,7 @@ import SearchBadge from './search-badge';
       return this.isSelectedText === 'Selected';
     }),
     isActive: is('[class*="is-selected"]'),
-    hasFocus: is(':focus'),
+    hasFocus: isFocused(),
     clickThrough: clickable()
   });
 

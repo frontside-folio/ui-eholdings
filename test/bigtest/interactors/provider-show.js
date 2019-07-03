@@ -6,7 +6,7 @@ import {
   interactor,
   text,
   clickable,
-  is
+  isFocused
 } from '@bigtest/interactor'; // eslint-disable-line
 
 import TagsAccordion from './tags-accordion';
@@ -18,7 +18,7 @@ import SearchBadge from './search-badge';
 @interactor class ProviderShowPage {
   paneTitle = text('[data-test-eholdings-details-view-pane-title]');
   name = text('[data-test-eholdings-details-view-name="provider"]');
-  nameHasFocus = is('[data-test-eholdings-details-view-name="provider"]', ':focus');
+  nameHasFocus = isFocused('[data-test-eholdings-details-view-name="provider"]');
   numPackages = text('[data-test-eholdings-provider-details-packages-total]');
   numPackagesSelected = text('[data-test-eholdings-provider-details-packages-selected]');
   hasBackButton = isPresent('[data-test-eholdings-details-view-back-button]');

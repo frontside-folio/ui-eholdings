@@ -9,7 +9,8 @@ import {
   interactor,
   value,
   text,
-  is
+  is,
+  isFocused
 } from '@bigtest/interactor'; // eslint-disable-line
 
 import TagsAccordion from './tags-accordion';
@@ -29,7 +30,7 @@ import SearchBadge from './search-badge';
   searchFieldSelectValue = value('[data-test-search-field] select');
   hasSearchFilters = isPresent('[data-test-eholdings-search-filters="titles"]');
   totalResults = text('[data-test-results-pane] [data-test-pane-header] p');
-  paneTitleHasFocus = is('[data-test-results-pane] [data-test-pane-header] h2 [tabindex]', ':focus');
+  paneTitleHasFocus = isFocused('[data-test-results-pane] [data-test-pane-header] h2 [tabindex]');
   titlePreviewPaneIsPresent = isPresent('[data-test-preview-pane="titles"]');
   sortBy = value('[data-test-eholdings-search-filters="titles"] input[name="sort"]:checked');
   providerPreviewPaneIsPresent = isPresent('[data-test-preview-pane="providers"]');
@@ -99,7 +100,7 @@ import SearchBadge from './search-badge';
     publicationType: text('[data-test-eholdings-title-list-item-publication-type]'),
     clickThrough: clickable(),
     isActive: is('[class*="is-selected--"]'),
-    hasFocus: is(':focus')
+    hasFocus: isFocused()
   });
 
   packageTitleList = collection('[data-test-query-list="title-packages"] li', {

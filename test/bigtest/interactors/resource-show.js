@@ -7,7 +7,7 @@ import {
   property,
   attribute,
   text,
-  is
+  isFocused
 } from '@bigtest/interactor'; // eslint-disable-line
 
 import AgreementsAccordion from './agreements-accordion';
@@ -40,7 +40,7 @@ import Toast from './toast';
   }
 
   titleName = text('[data-test-eholdings-details-view-name="resource"]');
-  nameHasFocus = is('[data-test-eholdings-details-view-name="resource"]', ':focus');
+  nameHasFocus = isFocused('[data-test-eholdings-details-view-name="resource"]');
   edition = text('[data-test-eholdings-resource-show-edition]');
   descriptionText = text('[data-test-eholdings-description-field]');
   publisherName = text('[data-test-eholdings-resource-show-publisher-name]');

@@ -4,6 +4,7 @@ import {
   collection,
   computed,
   fillable,
+  isFocused,
   isPresent,
   is,
   property,
@@ -25,7 +26,7 @@ import SearchBadge from './search-badge';
   hasTagFilter = isPresent('[data-test-eholdings-tag-filter]');
   searchFieldValue = value('[data-test-search-field] input[name="search"]');
   totalResults = text('[data-test-results-pane] [data-test-pane-header] p');
-  paneTitleHasFocus = is('[data-test-results-pane] [data-test-pane-header] h2 [tabindex]', ':focus');
+  paneTitleHasFocus = isFocused('[data-test-results-pane] [data-test-pane-header] h2 [tabindex]');
   providerPreviewPaneIsPresent = isPresent('[data-test-preview-pane="providers"]');
   packagePreviewPaneIsPresent = isPresent('[data-test-preview-pane="packages"]');
   hasBackButton = isPresent('[data-test-eholdings-details-view-back-button]');
@@ -84,7 +85,7 @@ import SearchBadge from './search-badge';
     providerName: text('[data-test-eholdings-package-list-item-provider-name]'),
     numPackagesSelected: text('[data-test-eholdings-provider-list-item-num-packages-selected]'),
     isActive: is('[class*="is-selected"]'),
-    hasFocus: is(':focus'),
+    hasFocus: isFocused(),
     clickThrough: clickable()
   });
 

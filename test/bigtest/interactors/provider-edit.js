@@ -7,7 +7,7 @@ import {
   fillable,
   blurrable,
   text,
-  is,
+  isFocused,
   attribute,
   action,
   isPresent,
@@ -34,7 +34,7 @@ import Toast from './toast';
   navigationModal = new ProviderEditNavigationModal('#navigation-modal');
   paneTitle = text('[data-test-eholdings-details-view-pane-title]');
   name = text('[data-test-eholdings-details-view-name="provider"]');
-  nameHasFocus = is('[data-test-eholdings-details-view-name="provider"]', ':focus');
+  nameHasFocus = isFocused('[data-test-eholdings-details-view-name="provider"]');
   clickCancel= action(function () {
     return this
       .dropDown.clickDropDownButton()

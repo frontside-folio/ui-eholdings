@@ -10,7 +10,7 @@ import {
   action,
   text,
   triggerable,
-  is,
+  isFocused,
   attribute,
 } from '@bigtest/interactor'; // eslint-disable-line
 
@@ -59,7 +59,7 @@ import PackageSelectionStatus from './selection-status';
   paneTitle = text('[data-test-eholdings-details-view-pane-title]');
   contentType = text('[data-test-eholdings-package-details-content-type]');
   name = text('[data-test-eholdings-details-view-name="package"]');
-  nameHasFocus = is('[data-test-eholdings-details-view-name="package"]', ':focus');
+  nameHasFocus = isFocused('[data-test-eholdings-details-view-name="package"]');
   numTitles = text('[data-test-eholdings-package-details-titles-total]');
   numTitlesSelected = text('[data-test-eholdings-package-details-titles-selected]');
   packageType = text('[data-test-eholdings-package-details-type]');
